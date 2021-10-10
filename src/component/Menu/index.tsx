@@ -119,7 +119,7 @@ class Menu extends React.Component<RouteComponentProps & Props> {
                 ))}
                 <Route path="/ops" component={Ops} />
                 {/* when the above does not match */}
-                {/* <Redirect to="/ops" /> */}
+                <Redirect to="/ops" />
               </Switch>
             </div>
             <div className="back-to-menu" onClick={this.toMenu.bind(this)}>

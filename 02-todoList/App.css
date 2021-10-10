@@ -1,0 +1,7 @@
+.todo-box {
+  width: 600px;
+  height: auto;
+  /* background-color: brown; */
+  border: 1px solid #e6e6e6;
+  margin: 20px auto;
+}

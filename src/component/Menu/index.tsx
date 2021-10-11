@@ -94,12 +94,13 @@ class Menu extends React.Component<RouteComponentProps & Props> {
       <div className="body">
         {!this.state.showItem ? (
           <div className="menu">
-            {items.map((item) => (
+            {items.map((item, index) => (
               <div
                 className="menu-item"
                 key={item.path}
                 onClick={this.handleShowItem.bind(this, item.name)}
               >
+                <div className="menu-order">{index + 1}</div>
                 <Link style={linkStyle} to={item.path}>
                   {item.name}
                 </Link>

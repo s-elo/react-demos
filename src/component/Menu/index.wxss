@@ -23,9 +23,21 @@
   text-align: start;
   cursor: pointer;
   font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .body .menu .menu-item:hover {
   transform: scale(105%, 105%);
+}
+.body .menu .menu-item .menu-order {
+  width: 30px;
+  height: 30px;
+  margin-left: 5px;
+  border: 2px solid black;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 30px;
 }
 .body .demo-area {
   width: fit-content;

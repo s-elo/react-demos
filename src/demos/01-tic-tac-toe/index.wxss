@@ -1,0 +1,66 @@
+.tic-tac-body {
+  font: 24px "Century Gothic", Futura, sans-serif;
+  margin: 20px;
+}
+.tic-tac-body li {
+  list-style: none;
+}
+.tic-tac-body ol,
+.tic-tac-body ul {
+  padding: 10px 0;
+}
+.tic-tac-body .board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+.tic-tac-body .status {
+  margin-bottom: 10px;
+  text-align: center;
+}
+.tic-tac-body .square {
+  background: #bdc3c7;
+  border: 3px solid #95a5a6;
+  border-radius: 5px;
+  float: left;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 34px;
+  height: 80px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 80px;
+  cursor: pointer;
+}
+.tic-tac-body .square:focus {
+  outline: none;
+}
+.tic-tac-body .kbd-navigation .square:focus {
+  background: #ddd;
+}
+.tic-tac-body .game {
+  display: flex;
+  flex-direction: row;
+}
+.tic-tac-body .game-info {
+  margin-left: 20px;
+}
+.tic-tac-body .game-info button {
+  background-color: #bdc3c7;
+  outline: none;
+  border-radius: 5px;
+  border: none;
+  padding: 5px;
+  font-weight: bold;
+  margin: 3px 0;
+  cursor: pointer;
+  transition: 0.5s;
+}
+.tic-tac-body .game-info button:hover {
+  transform: scale(105%, 105%);
+}
+.tic-tac-body .game-board {
+  margin: 0 auto;
+}

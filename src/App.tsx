@@ -1,7 +1,8 @@
 import React from "react";
 import Menu from "./component/Menu";
-import Others from "./demos/others/others";
+import TicTacToe from './demos/01-tic-tac-toe';
 import TodoList from "./demos/02-todoList/todoList";
+import Others from "./demos/others/others";
 
 import "./App.less";
 
@@ -15,6 +16,11 @@ const linkStyle = {
 };
 
 const demos = [
+  {
+    path: '/tictactoe',
+    name: 'tic-tac-toe',
+    component: TicTacToe
+  },
   {
     path: "/todoList",
     name: "To do List",

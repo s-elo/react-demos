@@ -1,6 +1,6 @@
 import React from "react";
-import Menu from "../../component/Menu";
-import ErrorBoundary from "./07-errorBoundary/Parent";
+import Menu from "@/component/Menu";
+import ErrorBoundary from "./07-errorBoundary/index";
 import RenderProp from "./06-render_prop(slot)";
 
 import "./others.less";

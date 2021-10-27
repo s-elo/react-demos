@@ -1,7 +1,7 @@
 import React from "react";
 import Menu from "./component/Menu";
 import TicTacToe from './demos/01-tic-tac-toe';
-import TodoList from "./demos/02-todoList/todoList";
+import TodoList from "./demos/02-todoList/TodoList";
 import Others from "./demos/others/others";
 
 import "./App.less";

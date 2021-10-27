@@ -1,5 +1,4 @@
 import React from "react";
-import Child from "./Child";
 
 export default class Parent extends React.Component {
   state = {
@@ -10,20 +9,20 @@ export default class Parent extends React.Component {
   // this function will be called
   // return the obj will change the state
   // it only works in production mode
-  static getDerivedStateFromError(err) {
+  static getDerivedStateFromError(err: object) {
     console.log(err);
     return { hasError: true };
   }
 
   // used to stat the errors
   // and send the stats to the server
-  componentDidCatch(err, info) {
+  componentDidCatch(err: object, info: object) {
     console.log(err, info);
   }
 
   render() {
     const { hasError } = this.state;
 
-    return <div>{hasError ? <h4>some problems</h4> : <Child />}</div>;
+    return hasError ? <h4>some problems</h4> : this.props.children;
   }
 }

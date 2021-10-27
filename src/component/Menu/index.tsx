@@ -7,7 +7,7 @@ import {
   withRouter,
   RouteComponentProps,
 } from "react-router-dom";
-import Ops from "../../component/Ops";
+import Ops from "@/component/Ops";
 
 import "./index.less";
 

@@ -1,24 +1,25 @@
 import React, { Component } from "react";
+import { TodoItemProps } from "../../type";
 import "./index.css";
 
-export default class index extends Component {
+export default class TodoItem extends Component<TodoItemProps> {
   state = {
     mouseFlag: false,
   };
 
-  handleMouse(flag) {
+  handleMouse(flag: boolean) {
     this.setState({
       mouseFlag: flag,
     });
   }
 
-  handleChange = (id) => {
-    return (event) => {
+  handleChange = (id: number) => {
+    return (event: React.ChangeEvent<HTMLInputElement>) => {
       this.props.updateStatus(id, event.target.checked);
     };
   };
 
-  handleDelete = (id) => {
+  handleDelete = (id: number) => {
     return () => {
       if (window.confirm("delete?")) {
         this.props.deleteTask(id);

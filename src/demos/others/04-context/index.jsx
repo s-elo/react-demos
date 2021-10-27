@@ -12,6 +12,7 @@ export default class Grand extends Component {
 
   render() {
     const { name, age } = this.state;
+
     return (
       <div>
         <div>This is Grand component</div>
@@ -20,7 +21,8 @@ export default class Grand extends Component {
         </div>
         <hr />
         {/* all the childs in Provider can access the value data */}
-        <Provider value={{ name, age }}>
+        {/* put the value in the state will avoid render the children when the father is rendered */}
+        <Provider value={this.state}>
           <Parent />
         </Provider>
       </div>

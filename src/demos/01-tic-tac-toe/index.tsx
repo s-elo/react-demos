@@ -16,7 +16,7 @@ import "./index.less";
 //     );
 //   }
 // }
-function calculateWinner(squares: Array<SquareProps['value']>) {
+function calculateWinner(squares: Array<SquareProps["value"]>) {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],

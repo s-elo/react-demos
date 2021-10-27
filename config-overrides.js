@@ -7,6 +7,12 @@
 //   // });
 //   return rewireLess(config, env);
 // };
-const { addLessLoader, override } = require("customize-cra");
+const path = require("path");
+const { addLessLoader, override, addWebpackAlias } = require("customize-cra");
 
-module.exports = override(addLessLoader());
+module.exports = override(
+  addLessLoader(),
+  addWebpackAlias({
+    ["@"]: path.resolve(__dirname, "./src"),
+  })
+);

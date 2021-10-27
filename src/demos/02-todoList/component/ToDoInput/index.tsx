@@ -1,11 +1,15 @@
 import React, { Component } from "react";
+import { TodoInputProps } from "../../type";
 import "./index.css";
 
-export default class ToDoInput extends Component {
-  handleKeyUp = (event) => {
-    const { target, keyCode } = event;
+export default class ToDoInput extends Component<TodoInputProps> {
+  handleKeyUp = (
+    event: React.KeyboardEvent<HTMLInputElement> &
+      React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { target, key } = event;
 
-    if (keyCode !== 13) {
+    if (key !== "Enter") {
       return;
     }
 

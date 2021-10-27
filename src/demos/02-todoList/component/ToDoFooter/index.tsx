@@ -1,8 +1,9 @@
 import React, { Component } from "react";
+import { TodoFooterProps } from "../../type";
 import "./index.css";
 
-export default class index extends Component {
-  handleSelectAll = (event) => {
+export default class index extends Component<TodoFooterProps> {
+  handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.props.selectAll(event.target.checked);
   };
 

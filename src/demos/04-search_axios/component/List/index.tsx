@@ -1,8 +1,21 @@
 import React, { Component } from "react";
+// import PubSub from "pubsub-js";
 import { Status } from "../../type";
 import "./index.less";
 
 export default class List extends Component<Status> {
+  // when using the PubSub
+  // componentDidMount() {
+  //   this.token = PubSub.subscribe("status", (_, status) => {
+  //     this.setState(status);
+  //   });
+  // }
+
+  // componentWillUnmount() {
+  //   PubSub.unsubscribe(this.token);
+  // }
+
+  // right now the state is hoisted to the father
   render() {
     const { data, isFirst, isLoading, err } = this.props;
 

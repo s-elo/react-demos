@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import axios from "axios";
-import "./index.css";
+import { SearchProps } from "../../type";
+import "./index.less";
 
-export default class Search extends Component {
+export default class Search extends Component<SearchProps> {
+  private searchInput = React.createRef<HTMLInputElement>();
+
   updateState = () => {
-    const {
-      searchInput: { value: searchStr },
-    } = this;
+    const searchStr = this.searchInput.current!.value;
 
     // update the status
     this.props.updateState({ isFirst: false, isLoading: true });
@@ -31,7 +32,7 @@ export default class Search extends Component {
       <div className="search-box">
         <div className="title">Search Github Users</div>
         <input
-          ref={(n) => (this.searchInput = n)}
+          ref={this.searchInput}
           type="text"
           placeholder="enter the name you search"
         />

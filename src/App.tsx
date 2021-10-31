@@ -2,6 +2,8 @@ import React from "react";
 import Menu from "./component/Menu";
 import TicTacToe from './demos/01-tic-tac-toe';
 import TodoList from "./demos/02-todoList/TodoList";
+import ProxyTest from './demos/03-proxy/Proxy';
+import SearchAxios from './demos/04-search_axios/SearchAxios';
 import Others from "./demos/others/others";
 
 import "./App.less";
@@ -25,6 +27,16 @@ const demos = [
     path: "/todoList",
     name: "To do List",
     component: TodoList,
+  },
+  {
+    path: '/proxy',
+    name: 'ProxyTest',
+    component: ProxyTest
+  },
+  {
+    path: '/searchAxios',
+    name: 'SearchAxios',
+    component: SearchAxios
   },
   {
     path: "/others",

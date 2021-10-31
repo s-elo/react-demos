@@ -1,19 +1,20 @@
 import React, { Component } from "react";
-import "./index.css";
+import { Status } from "../../type";
+import "./index.less";
 
-export default class List extends Component {
+export default class List extends Component<Status> {
   render() {
     const { data, isFirst, isLoading, err } = this.props;
 
     return (
-      <div className="list-box">
+      <div className="search-list-box">
         {isFirst ? (
           <h2>Welcome!</h2>
         ) : isLoading ? (
           <h2>Loading...</h2>
         ) : err ? (
           <h2 style={{ color: "red" }}>{err}</h2>
-        ) : (
+        ) : data ? (
           data.map((val) => {
             return (
               <div className="item" key={val.login}>
@@ -24,6 +25,8 @@ export default class List extends Component {
               </div>
             );
           })
+        ) : (
+          ""
         )}
       </div>
     );

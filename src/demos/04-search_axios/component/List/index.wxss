@@ -1,5 +1,5 @@
 .search-list-box {
-  height: auto;
+  max-height: 400px;
   width: 600px;
   background-color: #e6e6e6;
   margin: 20px auto;
@@ -10,6 +10,7 @@
   flex-wrap: wrap;
   padding: 20px 0 0 20px;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 .search-list-box .item {
   width: 150px;

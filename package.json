@@ -49,6 +49,7 @@
   "devDependencies": {
     "awesome-typescript-loader": "^5.2.1",
     "customize-cra": "^1.0.0",
+    "express": "^4.17.1",
     "less": "^4.1.2",
     "less-loader": "^6.0.0",
     "react-app-rewired": "^2.1.8",

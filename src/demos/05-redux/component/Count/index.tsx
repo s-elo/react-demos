@@ -4,7 +4,7 @@ import {
   incrementAction,
   decrementAction,
   incrementAsyncAction,
-} from "../../redux/count_action";
+} from "../../redux/counter/count_action";
 
 export default class Count extends Component {
   state = {
@@ -12,10 +12,10 @@ export default class Count extends Component {
     step: 1,
   };
 
-  stateChange = (event) => {
+  stateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = event.target;
     this.setState({
-      step: value * 1,
+      step: Number(value),
     });
   };
 
@@ -53,14 +53,14 @@ export default class Count extends Component {
       <div className="box">
         <h2 className="count-show">SUM: {store.getState()}</h2>
         <select onChange={this.stateChange}>
-          <option select="1">1</option>
-          <option select="2">2</option>
-          <option select="3">3</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
         </select>
         &nbsp;
         <button onClick={this.add}>+</button>&nbsp;
         <button onClick={this.sub}>-</button>&nbsp;
-        <button onClick={this.addIfOdd}>+ odd</button>&nbsp;
+        <button onClick={this.addIfOdd}>+ ifodd</button>&nbsp;
         <button onClick={this.addAsync}>+ async</button>
       </div>
     );

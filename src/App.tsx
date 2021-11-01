@@ -1,9 +1,10 @@
 import React from "react";
 import Menu from "./component/Menu";
-import TicTacToe from './demos/01-tic-tac-toe';
+import TicTacToe from "./demos/01-tic-tac-toe";
 import TodoList from "./demos/02-todoList/TodoList";
-import ProxyTest from './demos/03-proxy/Proxy';
-import SearchAxios from './demos/04-search_axios/SearchAxios';
+import ProxyTest from "./demos/03-proxy/Proxy";
+import SearchAxios from "./demos/04-search_axios/SearchAxios";
+import ReduxDemo from "./demos/05-redux/ReduxDemo";
 import Others from "./demos/others/others";
 
 import "./App.less";
@@ -19,9 +20,9 @@ const linkStyle = {
 
 const demos = [
   {
-    path: '/tictactoe',
-    name: 'tic-tac-toe',
-    component: TicTacToe
+    path: "/tictactoe",
+    name: "tic-tac-toe",
+    component: TicTacToe,
   },
   {
     path: "/todoList",
@@ -29,14 +30,19 @@ const demos = [
     component: TodoList,
   },
   {
-    path: '/proxy',
-    name: 'ProxyTest',
-    component: ProxyTest
+    path: "/proxy",
+    name: "ProxyTest",
+    component: ProxyTest,
   },
   {
-    path: '/searchAxios',
-    name: 'SearchAxios',
-    component: SearchAxios
+    path: "/searchAxios",
+    name: "SearchAxios",
+    component: SearchAxios,
+  },
+  {
+    path: "/reduxDemo",
+    name: "ReduxDemo",
+    component: ReduxDemo,
   },
   {
     path: "/others",

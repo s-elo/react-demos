@@ -33,8 +33,10 @@ export default class Count extends Component {
 
   addIfOdd = () => {
     const { step } = this.state;
+    // the store contains two states
+    const { counterSum } = store.getState();
 
-    if (store.getState() % 2 === 0) {
+    if (counterSum % 2 === 0) {
       return;
     }
 
@@ -51,7 +53,7 @@ export default class Count extends Component {
   render() {
     return (
       <div className="box">
-        <h2 className="count-show">SUM: {store.getState()}</h2>
+        <h2 className="count-show">SUM: {store.getState().counterSum}</h2>
         <select onChange={this.stateChange}>
           <option value="1">1</option>
           <option value="2">2</option>

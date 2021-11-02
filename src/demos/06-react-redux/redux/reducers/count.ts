@@ -1,5 +1,5 @@
 const initData = 0;
-export default function (prevState = initData, action) {
+export default function counterReducer(prevState = initData, action: any) {
   const { type, data } = action;
 
   switch (type) {

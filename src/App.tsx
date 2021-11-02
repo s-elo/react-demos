@@ -5,6 +5,7 @@ import TodoList from "./demos/02-todoList/TodoList";
 import ProxyTest from "./demos/03-proxy/Proxy";
 import SearchAxios from "./demos/04-search_axios/SearchAxios";
 import ReduxDemo from "./demos/05-redux/ReduxDemo";
+import ReactRedux from "./demos/06-react-redux/ReactRedux";
 import Others from "./demos/others/others";
 
 import "./App.less";
@@ -43,6 +44,11 @@ const demos = [
     path: "/reduxDemo",
     name: "ReduxDemo",
     component: ReduxDemo,
+  },
+  {
+    path: "/reactRedux",
+    name: "ReactRedux",
+    component: ReactRedux,
   },
   {
     path: "/others",

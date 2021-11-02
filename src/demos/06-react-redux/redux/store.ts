@@ -1,6 +1,8 @@
-import { createStore, applyMiddleware } from "redux";
+import { createStore, applyMiddleware, combineReducers } from "redux";
 
-import allReducers from "./reducers";
+// reducers
+import sum from "./reducers/count";
+import persons from "./reducers/person";
 
 // handle the async actions
 import thunk from "redux-thunk";
@@ -8,6 +10,9 @@ import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 export default createStore(
-  allReducers,
+  combineReducers({
+    sum,
+    persons,
+  }),
   composeWithDevTools(applyMiddleware(thunk))
 );

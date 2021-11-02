@@ -3,7 +3,15 @@ import { connect } from "react-redux";
 
 import { AddPerosonAction } from "../../redux/actions/person";
 
-class Person extends Component {
+import { Person as PersonData, ReduxState } from "../../redux/type";
+
+type PersonProps = {
+  persons: Array<PersonData>;
+  count: number;
+  add: (personObj: PersonData) => void;
+};
+
+class Person extends Component<PersonProps> {
   state = {
     inputName: "",
     inputAge: "",
@@ -24,13 +32,13 @@ class Person extends Component {
     });
   };
 
-  handleNameInput = (event) => {
+  handleNameInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       inputName: event.target.value,
     });
   };
 
-  handleAgeInput = (event) => {
+  handleAgeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       inputAge: event.target.value,
     });
@@ -70,7 +78,7 @@ class Person extends Component {
 }
 
 export default connect(
-  (state) => ({
+  (state: ReduxState) => ({
     persons: state.persons,
     count: state.sum,
   }),

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import store from "./redux/store";
 import Count from "./component/Count";
+import Todos from './component/Todos/Todos';
 
 export default class ReduxDemo extends Component {
   unsubscribe: () => void = () => {}
@@ -20,6 +21,8 @@ export default class ReduxDemo extends Component {
     return (
       <div>
         <Count />
+        <hr />
+        <Todos />
       </div>
     );
   }

@@ -1,4 +1,8 @@
-export default function todoReducer(prevState: string[] = [], action: any) {
+const initialWorks = ["sleeping", "coding", "playing"];
+export default function todoReducer(
+  prevState: string[] = initialWorks,
+  action: any
+) {
   const { type, work } = action;
 
   switch (type) {

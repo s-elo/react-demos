@@ -51,9 +51,12 @@ export default class Count extends Component {
   };
 
   render() {
+    const { counterSum, todoList } = store.getState();
+
     return (
       <div className="box">
-        <h2 className="count-show">SUM: {store.getState().counterSum}</h2>
+        <h2 className="count-show">SUM: {counterSum}</h2>
+        <h2>Todo Num: {todoList.length}</h2>
         <select onChange={this.stateChange}>
           <option value="1">1</option>
           <option value="2">2</option>

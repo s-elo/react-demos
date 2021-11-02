@@ -1,0 +1,14 @@
+.todo-redux-box {
+  margin-top: 10px;
+}
+.todo-redux-box span {
+  font-weight: bold;
+}
+.todo-redux-box li {
+  list-style: none;
+}
+.todo-redux-box input,
+.todo-redux-box button {
+  margin-left: 10px;
+  outline: none;
+}

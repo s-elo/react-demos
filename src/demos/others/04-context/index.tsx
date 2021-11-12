@@ -1,7 +1,12 @@
 import React, { Component } from "react";
 
+interface InfoContextInterface {
+  name: string;
+  age: number;
+}
+
 // create a context
-const MyContext = React.createContext();
+const MyContext = React.createContext<InfoContextInterface | null>(null);
 const { Provider, Consumer } = MyContext;
 
 export default class Grand extends Component {
@@ -72,7 +77,7 @@ function NextChild() {
           {
             // value is the this.context
             (value) =>
-              `name from Grand: ${value.name} --age from Grand: ${value.age}`
+              `name from Grand: ${value!.name} --age from Grand: ${value!.age}`
           }
         </Consumer>
       </div>

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 
 //#region class way
@@ -47,7 +47,7 @@ export default function Demo() {
   });
 
   function unmount() {
-    ReactDOM.unmountComponentAtNode(document.getElementById("root"));
+    ReactDOM.unmountComponentAtNode(document.getElementById("root") as HTMLElement);
   }
 
   function add() {
@@ -59,10 +59,11 @@ export default function Demo() {
     setCount((count) => count + 1);
   }
 
-  const inputValue = React.useRef();
+  const inputValue = React.useRef<HTMLInputElement>(null);
+
   function show() {
     console.log(inputValue);
-    alert(inputValue.current.value);
+    if (inputValue.current) alert(inputValue.current.value);
   }
 
   return (

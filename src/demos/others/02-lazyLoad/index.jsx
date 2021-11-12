@@ -12,14 +12,14 @@ export default class LazyLoad extends Component {
     return (
       <div>
         <div>
-          <NavLink to="/home">Home</NavLink>&nbsp;
-          <NavLink to="/about">About</NavLink>
+          <NavLink to="/others/lazyLoad/home">Home</NavLink>&nbsp;
+          <NavLink to="/others/lazyLoad/about">About</NavLink>
         </div>
         <hr />
         <div>
           <Suspense fallback={<div>Loading...</div>}>
-            <Route path="/home" component={lazyHome} />
-            <Route path="/about" component={lazyAbout} />
+            <Route path="/others/lazyLoad/home" component={lazyHome} />
+            <Route path="/others/lazyLoad/about" component={lazyAbout} />
           </Suspense>
         </div>
       </div>

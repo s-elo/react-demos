@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import Count from '../01-setState';
+import Count from "../01-setState/setState";
+
+type APropType = {
+  render: (name: string) => React.ComponentElement<BPropType, any>;
+};
+
+type BPropType = {
+  name: string;
+};
 
 export default class Parent extends Component {
   render() {
@@ -7,14 +15,14 @@ export default class Parent extends Component {
       <div>
         <div>Parent...</div>
         {/* B can be changed any other Component */}
-        <A render={(name) => <B name={name}/>} />
-        <A render={(name) => <Count name={name}/>} />
+        <A render={(name) => <B name={name} />} />
+        <A render={(name) => <Count name={name} />} />
       </div>
     );
   }
 }
 
-class A extends Component {
+class A extends Component<APropType> {
   state = {
     name: "leo",
   };
@@ -32,7 +40,7 @@ class A extends Component {
   }
 }
 
-class B extends Component {
+class B extends Component<BPropType> {
   render() {
     return (
       <div>

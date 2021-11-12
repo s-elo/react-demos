@@ -1,5 +1,9 @@
 import React from "react";
 import Menu from "@/component/Menu";
+import LazyLoad from "./02-lazyLoad";
+import Hooks from "./03-hooks";
+import Context from "./04-context";
+import PureComDemo from "./05-pureComponent";
 import ErrorBoundary from "./07-errorBoundary/index";
 import RenderProp from "./06-render_prop(slot)";
 
@@ -15,6 +19,26 @@ const linkStyle = {
 };
 
 const demos = [
+  {
+    path: "/others/lazyLoad",
+    name: "LazyLoad",
+    component: LazyLoad,
+  },
+  {
+    path: "/others/hooks",
+    name: "Hooks",
+    component: Hooks,
+  },
+  {
+    path: "/others/context",
+    name: "Context",
+    component: Context,
+  },
+  {
+    path: "/others/pureComDemo",
+    name: "PureComDemo",
+    component: PureComDemo,
+  },
   {
     path: "/others/errorBoundary",
     name: "Error Boumdary",

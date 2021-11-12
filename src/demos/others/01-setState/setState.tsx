@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 
-export default class Demo extends Component {
+type StateType = { count: number };
+type PropType = { name: string };
+
+export default class Demo extends Component<PropType, StateType> {
   state = {
     count: 0,
   };
@@ -38,7 +41,7 @@ export default class Demo extends Component {
   render() {
     return (
       <div>
-        <div>Count name: { this.props.name }</div>
+        <div>Count name: {this.props.name}</div>
         <div>count: {this.state.count}</div>
         <button onClick={this.add.bind(this)}>+</button>
       </div>

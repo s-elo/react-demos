@@ -10,13 +10,22 @@ type BPropType = {
 };
 
 export default class Parent extends Component {
+  // use the concrete function to declare instead of anominous func
+  renderBFunc = (name: string) => {
+    return <B name={name} />;
+  };
+
+  renderCountFunc = (name: string) => {
+    return <Count name={name} />;
+  };
+
   render() {
     return (
       <div>
         <div>Parent...</div>
-        {/* B can be changed any other Component */}
-        <A render={(name) => <B name={name} />} />
-        <A render={(name) => <Count name={name} />} />
+        {/* the render prop can be changed to another name */}
+        <A render={this.renderBFunc} />
+        <A render={this.renderCountFunc} />
       </div>
     );
   }
@@ -33,7 +42,7 @@ class A extends Component<APropType> {
     return (
       <div>
         <div>A...</div>
-        {/* slot */}
+        {/* slot, this area can be customized by the parent */}
         {this.props.render(name)}
       </div>
     );

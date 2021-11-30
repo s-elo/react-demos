@@ -6,6 +6,7 @@ import Context from "./04-context";
 import PureComDemo from "./05-pureComponent";
 import ErrorBoundary from "./07-errorBoundary/index";
 import RenderProp from "./06-render_prop(slot)";
+import Portal from "./08-portal/PortalDemo";
 
 import "./others.less";
 
@@ -48,6 +49,11 @@ const demos = [
     path: "/others/renderProp",
     name: "Render Prop(slot)",
     component: RenderProp,
+  },
+  {
+    path: "/others/portalDemo",
+    name: "portal demo",
+    component: Portal,
   },
 ];
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 
 //#region class way
@@ -25,29 +25,51 @@ export default function Demo() {
   // React.useState is a so-called hook
   // [state, setStateMethod] = React.useState(initial value);
   // each state corresponding to a set method
-  const [count, setCount] = React.useState(0);
-  const [name, changeName] = React.useState("pit");
+  const [count, setCount] = useState(0);
+  const [name, changeName] = useState("pit");
 
   /**
    * React.useEffect(callback, array)
    * array is used to watch the states
    * if [count], when count updates, the callback will be called, it is the componentDidUpdate
    * so blank [] means no states are watched, so it is the componentDidMount
-   *
+   * More accurately, the effect logics will run after rerendering every time by default
+   * if the array is null
+   * and the state in [] is being watched as if not being changed,
+   * the effect will not run
    */
-  React.useEffect(() => {
+
+  // only run once like componentDidMount
+  useEffect(() => {
+    console.log("did mount");
+  }, []);
+
+  useEffect(() => {
     const timer = setInterval(() => {
       setCount(count + 1);
     }, 1000);
 
-    // return the function is the componentWillUnmount
+    console.log("effected");
+
+    // return the function is the like componentWillUnmount
+    // but actually it will be executed every time after rerendering
+    // following the above logic
+    // more like the following componentDidUpdate
     return () => {
+      console.log("effected in return");
       clearInterval(timer);
     };
   });
 
+  // it can be multiple effects
+  useEffect(() => {
+    console.log("another effect used to watch the name state");
+  }, [name]);
+
   function unmount() {
-    ReactDOM.unmountComponentAtNode(document.getElementById("root") as HTMLElement);
+    ReactDOM.unmountComponentAtNode(
+      document.getElementById("root") as HTMLElement
+    );
   }
 
   function add() {
@@ -72,8 +94,8 @@ export default function Demo() {
       <div>
         count: {count}---{name}
       </div>
-      <button onClick={add}>+&changeName</button>
-      <button onClick={unmount}>unmount</button>
+      <button onClick={add}>+&changeName</button>&nbsp;
+      <button onClick={unmount}>unmount</button>&nbsp;
       <button onClick={show}>show</button>
     </div>
   );

@@ -16,10 +16,14 @@ let nextUnitOfWork = null;
 let wipRoot = null; // the root of th fiber tree
 let currentRoot = null; // to diff the old tree and the new tree
 let deletions = null;
+// for function component
+let wipFiber = null;
+let hookIndex = null;
 
 const Simact = {
   createElement,
   render,
+  useState,
 };
 
 // const element = Simact.createElement(
@@ -33,10 +37,21 @@ const Simact = {
 /** @jsx Simact.createElement */
 const element = (
   <div id="Text">
-    <h1>title</h1>
-    <p>text</p>
+    {/* <h1>title</h1>
+    <App name="leo" />
+    <p>text</p> */}
+    <Counter />
   </div>
 );
+
+function App(props) {
+  return <h1>Hi {props.name}</h1>;
+}
+
+function Counter() {
+  const [count, setCount] = Simact.useState(0);
+  return <h1 onClick={() => setCount((c) => c + 1)}>Count: {count}</h1>;
+}
 
 Simact.render(element, rootDom);
 
@@ -57,8 +72,7 @@ function workLoop(IdleDeadline) {
 
   // when our render job is completed
   if (!nextUnitOfWork && wipRoot) {
-    // return without setting another requestIdleCallback
-    return commitRoot(); // wipRoot will be set as null in commitRoot func
+    commitRoot(); // wipRoot will be set as null in commitRoot func
   }
 
   // when the browser is idle, woekloop will be called
@@ -78,15 +92,15 @@ function workLoop(IdleDeadline) {
  */
 function performUnitOfWork(fiber) {
   // 1. create a new Dom but not append it
-  // note that the root fiber has already had the dom
-  if (!fiber.dom) {
-    fiber.dom = createDom(fiber);
-  }
-
   // 2. create new fiber for each children
-  const childElements = fiber.props.children;
-  // diff the children of the current fiber(work)
-  reconcileChildren(fiber, childElements);
+  // note that the root fiber has already had the dom
+  const isFunctionComponent = fiber.type instanceof Function;
+  if (isFunctionComponent) {
+    // when fiber.type is a function
+    upadteFunctionComponent(fiber);
+  } else {
+    updateHostComponent(fiber);
+  }
 
   // 3. determine the next unit of work(fiber)
   // child -> sibling -> uncle(the sibling of the parent)
@@ -96,11 +110,73 @@ function performUnitOfWork(fiber) {
   while (nextFiber) {
     if (nextFiber.sibling) return nextFiber.sibling;
 
-    // search up to the root fiber
+    // search up to the root fiber to find the uncle
     nextFiber = nextFiber.parent;
   }
 
   return;
+}
+
+function updateHostComponent(fiber) {
+  // 1. create a new Dom but not append it
+  if (!fiber.dom) {
+    fiber.dom = createDom(fiber);
+  }
+
+  // 2. create new fiber for each children
+  const childElements = fiber.props.children;
+  // diff the children of the current fiber(work)
+  reconcileChildren(fiber, childElements);
+}
+
+function upadteFunctionComponent(fiber) {
+  wipFiber = fiber;
+  hookIndex = 0;
+  // store the old hooks
+  wipFiber.hooks = [];
+
+  // fiber.type is a function
+  // the return JSX is the child of the function component
+  const children = [fiber.type(fiber.props)];
+  reconcileChildren(fiber, children);
+}
+
+function useState(initVal) {
+  const oldHook =
+    wipFiber.alternate &&
+    wipFiber.alternate.hooks &&
+    wipFiber.alternate.hooks[hookIndex];
+
+  // when rendering, use the state of the old hook if it exists
+  const hook = { state: oldHook ? oldHook.state : initVal, queue: [] };
+
+  // run all the actions to change the state
+  // the return state is updated
+  const actions = oldHook ? oldHook.queue : [];
+  actions.forEach((action) => {
+    hook.state = action(hook.state);
+  });
+
+  const setState = (action) => {
+    // action is a function
+    // cache the actions first, run them in the next rendering time (above)
+    hook.queue.push(action);
+
+    // reboot the workloop by give non-null value of the nextUnitOfWork
+    // it is like rerendering
+    wipRoot = {
+      dom: currentRoot.dom,
+      props: currentRoot.props,
+      alternate: currentRoot,
+    };
+
+    nextUnitOfWork = wipRoot;
+    deletions = [];
+  };
+
+  wipFiber.hooks.push(hook);
+  hookIndex++;
+  return [hook.state, setState];
 }
 
 function reconcileChildren(wipFiber, children) {
@@ -179,17 +255,35 @@ function commitRoot() {
 function commitWork(fiber) {
   if (!fiber) return;
 
-  const parentDom = fiber.parent.dom;
+  let parentFiber = fiber.parent;
+  // find the fiber with dom for function component purpose
+  while (!parentFiber.dom) {
+    parentFiber = parentFiber.parent;
+  }
+
+  const parentDom = parentFiber.dom;
+
   if (fiber.effectTag === "PLACEMENT" && fiber.dom != null) {
     parentDom.appendChild(fiber.dom);
   } else if (fiber.effectTag === "DELETION") {
-    parentDom.removeChild(fiber.dom);
+    // after considering the function component
+    // the fiber.dom may be null now
+    commitDeletion(fiber, parentDom);
   } else if (fiber.effectTag === "UPDATE" && fiber.dom != null) {
     updateDom(fiber.dom, fiber.props, fiber.alternate.props);
   }
 
   commitWork(fiber.child);
   commitWork(fiber.sibling);
+}
+
+function commitDeletion(fiber, parentDom) {
+  if (fiber.dom) {
+    parentDom.removeChild(fiber.dom);
+  } else {
+    // function component
+    commitDeletion(fiber.child, parentDom);
+  }
 }
 
 function createElement(type = "div", props = {}, ...children) {
@@ -224,15 +318,13 @@ function createDom(fiber) {
       : document.createElement(fiber.type);
 
   // add properties of the nodes
-  Object.keys(fiber.props)
-    .filter((key) => key !== "children")
-    .forEach((prop) => (dom[prop] = fiber.props[prop]));
+  updateDom(dom, fiber.props, {});
 
   return dom;
 }
 
 function updateDom(dom, nextProps, prevProps) {
-  const isEvent = (key) => key.startWith("on");
+  const isEvent = (key) => key.startsWith("on");
   const isProp = (key) => key !== "children" && !isEvent(key);
   const isNew = (prev, next) => (key) => prev[key] !== next[key];
   const isRemoved = (next) => (prevKey) => !(prevKey in next);
@@ -245,7 +337,7 @@ function updateDom(dom, nextProps, prevProps) {
     )
     .forEach((eventName) => {
       const eventType = eventName.toLowerCase().slice(2);
-      dom.removeEeventListener(eventType, prevProps[eventName]);
+      dom.removeEventListener(eventType, prevProps[eventName]);
     });
 
   // add new event listeners

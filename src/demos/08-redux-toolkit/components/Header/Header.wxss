@@ -18,6 +18,7 @@
   line-height: 1.4rem;
   margin: 0 10px;
   border-radius: 5px;
+  font-size: 2rem;
 }
 .header-container .link-btn:hover {
   background-color: #673daa;

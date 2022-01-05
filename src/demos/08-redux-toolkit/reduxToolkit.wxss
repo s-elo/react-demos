@@ -1,0 +1,4 @@
+.post-container {
+  width: 35rem;
+  height: fit-content;
+}

@@ -3,10 +3,11 @@ import Menu from "./component/Menu";
 import TicTacToe from "./demos/01-tic-tac-toe";
 import TodoList from "./demos/02-todoList/TodoList";
 import ProxyTest from "./demos/03-proxy/Proxy";
-import SearchAxios from "./demos/04-search_axios/SearchAxios";
+import SearchAxios from "./demos/04-search-axios/SearchAxios";
 import ReduxDemo from "./demos/05-redux/ReduxDemo";
 import ReactRedux from "./demos/06-react-redux/ReactRedux";
 import RefDemo from "./demos/07-refs";
+import ReduxToolkit from "./demos/08-redux-toolkit/ReduxToolkit";
 import Others from "./demos/others/others";
 
 import "./App.less";
@@ -55,6 +56,11 @@ const demos = [
     path: "/refDemo",
     name: "RefDemo",
     component: RefDemo,
+  },
+  {
+    path: "/reduxToolkit",
+    name: "ReduxToolkit",
+    component: ReduxToolkit,
   },
   {
     path: "/others",

@@ -1,17 +1,17 @@
 import React, { Component } from "react";
 
-function FunctionInput() {
-  const state = {
-    name: "leo",
-    age: 22,
-  };
+// function FunctionInput() {
+//   const state = {
+//     name: "leo",
+//     age: 22,
+//   };
 
-  const handleInputChanged = (el: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(el.target.value);
-  };
+//   const handleInputChanged = (el: React.ChangeEvent<HTMLInputElement>) => {
+//     console.log(el.target.value);
+//   };
 
-  return <input type="text" onChange={handleInputChanged} />;
-}
+//   return <input type="text" onChange={handleInputChanged} />;
+// }
 
 class ClassInput extends Component {
   state = {

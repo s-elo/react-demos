@@ -26,13 +26,7 @@ export default function EditPostForm(props) {
 
     if (content.trim() === "") return alert("Please give some content");
 
-    const updatedPost = {
-      id: postId,
-      title,
-      content,
-    };
-
-    dispatch(postUpdated(updatedPost));
+    dispatch(postUpdated(postId, title, content));
 
     alert("Updated!");
   };

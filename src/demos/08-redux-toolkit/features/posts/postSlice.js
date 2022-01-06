@@ -9,18 +9,44 @@ const postSlice = createSlice({
   name: "posts",
   initialState,
   reducers: {
-    postAdded(state, action) {
-      state.unshift(action.payload);
+    postAdded: {
+      reducer(state, action) {
+        state.unshift(action.payload);
+      },
+
+      // this callback help us create the payload object
+      // so that we dont need do this every time in components
+      prepare(title, content) {
+        return {
+          payload: {
+            id: nanoid(),
+            title,
+            content,
+          },
+        };
+      },
     },
 
-    postUpdated(state, action) {
-      const { id, title, content } = action.payload;
+    postUpdated: {
+      reducer(state, action) {
+        const { id, title, content } = action.payload;
 
-      const prevPost = state.find((post) => post.id === id);
-      if (prevPost) {
-        prevPost.title = title;
-        prevPost.content = content;
-      }
+        const prevPost = state.find((post) => post.id === id);
+        if (prevPost) {
+          prevPost.title = title;
+          prevPost.content = content;
+        }
+      },
+
+      prepare(id, title, content) {
+        return {
+          payload: {
+            id,
+            title,
+            content,
+          },
+        };
+      },
     },
   },
 });

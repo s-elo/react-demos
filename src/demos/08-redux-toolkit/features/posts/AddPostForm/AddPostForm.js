@@ -22,13 +22,7 @@ function AddPostForm(props) {
 
     if (content.trim() === "") return alert("Please give some content");
 
-    const newPost = {
-      id: nanoid(),
-      title,
-      content,
-    };
-
-    dispatch(postAdded(newPost));
+    dispatch(postAdded(title, content));
 
     alert('Added!');
     props.history.push("/reduxToolkit/posts");

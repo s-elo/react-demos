@@ -1,13 +1,26 @@
 .header-container {
   width: 100%;
-  height: 5rem;
+  height: fit-content;
   background-color: #6129bd;
+  border-radius: 5px;
+  padding-top: 10px;
+}
+.header-container title {
+  display: block;
+  width: 100%;
+  font-size: 3rem;
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+}
+.header-container .tap-box {
+  width: 100%;
+  height: 5rem;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  border-radius: 5px;
 }
-.header-container .link-btn {
+.header-container .tap-box .link-btn {
   display: block;
   height: 3rem;
   padding: 0.8rem;
@@ -20,6 +33,6 @@
   border-radius: 5px;
   font-size: 2rem;
 }
-.header-container .link-btn:hover {
+.header-container .tap-box .link-btn:hover {
   background-color: #673daa;
 }

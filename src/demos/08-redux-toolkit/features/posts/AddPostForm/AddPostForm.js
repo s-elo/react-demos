@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { withRouter } from "react-router-dom";
-import { nanoid } from "@reduxjs/toolkit";
 import { postAdded } from "../postSlice";
 
 import "./AddPostForm.less";
@@ -26,7 +25,6 @@ function AddPostForm(props) {
 
     if (content.trim() === "") return alert("Please give some content");
 
-    console.log(userId);
     dispatch(postAdded(title, content, userId));
 
     alert("Added!");

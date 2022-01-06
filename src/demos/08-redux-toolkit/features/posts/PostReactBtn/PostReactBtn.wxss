@@ -1,0 +1,12 @@
+.react-btn-container {
+  margin: 20px 0;
+  display: flex;
+  justify-content: flex-start;
+}
+.react-btn-container .emoji-btn {
+  margin-right: 10px;
+  transition: 0.5s;
+}
+.react-btn-container .emoji-btn:hover {
+  transform: scale(1.1, 1.1);
+}

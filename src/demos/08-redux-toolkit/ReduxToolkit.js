@@ -4,6 +4,8 @@ import { Provider } from "react-redux";
 import Header from "./components/Header/Header";
 import PostList from "./features/posts/PostList/PostList";
 import AddPostForm from "./features/posts/AddPostForm/AddPostForm";
+import EditPostForm from "./features/posts/EditPostForm/EditPostForm";
+import PostDetail from "./features/posts/PostDetail/PostDetail";
 import UserList from "./features/users/UserList/UserList";
 import Notifications from "./components/Notifications/Notifications";
 import store from "./store";
@@ -33,9 +35,20 @@ function ReduxToolkit(props) {
         <main className="app-sections">
           <Switch>
             <Route
+              exact // to match the /posts/:postId
               path={`${demoPath}/posts`}
               component={PostList}
               key="/posts"
+            />
+            <Route
+              path={`${demoPath}/posts/:postId`}
+              component={PostDetail}
+              key="/postDetail"
+            />
+             <Route
+              path={`${demoPath}/edit/:postId`}
+              component={EditPostForm}
+              key="/editPostForm"
             />
             <Route
               path={`${demoPath}/addPost`}

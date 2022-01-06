@@ -54,13 +54,14 @@
   min-height: 10rem;
   padding: 10px 10px;
 }
-.app-body .form button {
+.app-body .btn {
   width: fit-content;
   height: fit-content;
   padding: 10px;
-  background-color: #8d4ec9;
   outline: none;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  text-decoration: none;
+  display: block;
 }

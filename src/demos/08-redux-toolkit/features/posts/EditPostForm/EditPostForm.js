@@ -1,14 +1,18 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { withRouter } from "react-router-dom";
-import { nanoid } from "@reduxjs/toolkit";
-import { postAdded } from "../postSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { postUpdated } from "../postSlice";
 
-import "./AddPostForm.less";
+import "./EditPostForm.less";
 
-function AddPostForm(props) {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+export default function EditPostForm(props) {
+  const { postId } = props.match.params;
+
+  const post = useSelector((state) =>
+    state.posts.find((post) => post.id === postId)
+  );
+
+  const [title, setTitle] = useState(post.title);
+  const [content, setContent] = useState(post.content);
 
   const dispatch = useDispatch();
 
@@ -22,20 +26,19 @@ function AddPostForm(props) {
 
     if (content.trim() === "") return alert("Please give some content");
 
-    const newPost = {
-      id: nanoid(),
+    const updatedPost = {
+      id: postId,
       title,
       content,
     };
 
-    dispatch(postAdded(newPost));
+    dispatch(postUpdated(updatedPost));
 
-    alert('Added!');
-    props.history.push("/reduxToolkit/posts");
+    alert("Updated!");
   };
 
   return (
-    <section className="add-post-form-container">
+    <section className="edit-post-form-container">
       <form className="form">
         <label htmlFor="">Post Title:</label>
         <input
@@ -55,11 +58,9 @@ function AddPostForm(props) {
           onChange={onContentChanged}
         />
         <button className="btn" onClick={onSaveBtnClick}>
-          Save Post
+          Edit Post
         </button>
       </form>
     </section>
   );
 }
-
-export default withRouter(AddPostForm);

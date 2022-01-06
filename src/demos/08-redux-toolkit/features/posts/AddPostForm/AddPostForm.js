@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { nanoid } from "@reduxjs/toolkit";
 import { postAdded } from "../postSlice";
@@ -7,13 +7,17 @@ import { postAdded } from "../postSlice";
 import "./AddPostForm.less";
 
 function AddPostForm(props) {
+  const users = useSelector((state) => state.users);
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [userId, setUserId] = useState(users[0].id);
 
   const dispatch = useDispatch();
 
   const onTitleChanged = (e) => setTitle(e.target.value);
   const onContentChanged = (e) => setContent(e.target.value);
+  const onUserSelected = (e) => setUserId(e.target.value);
 
   const onSaveBtnClick = (e) => {
     e.preventDefault();
@@ -22,16 +26,17 @@ function AddPostForm(props) {
 
     if (content.trim() === "") return alert("Please give some content");
 
-    dispatch(postAdded(title, content));
+    console.log(userId);
+    dispatch(postAdded(title, content, userId));
 
-    alert('Added!');
+    alert("Added!");
     props.history.push("/reduxToolkit/posts");
   };
 
   return (
     <section className="add-post-form-container">
       <form className="form">
-        <label htmlFor="">Post Title:</label>
+        <label>Post Title:</label>
         <input
           type="text"
           id="postTitle"
@@ -40,7 +45,19 @@ function AddPostForm(props) {
           onChange={onTitleChanged}
           placeholder={`What's on your mind?`}
         />
-        <label htmlFor="">Post Content:</label>
+        <label>Author:</label>
+        <select
+          name="user"
+          id="user"
+          onChange={onUserSelected}
+        >
+          {users.map((user) => (
+            <option value={user.id} key={user.id}>
+              {user.name}
+            </option>
+          ))}
+        </select>
+        <label>Post Content:</label>
         <textarea
           type="text"
           id="postContent"

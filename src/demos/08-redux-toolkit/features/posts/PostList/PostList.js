@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import PostItem from "../../../components/PostItem/PostItem";
+import PostItem from "../PostItem/PostItem";
 import './PostList.less';
 
 export default function PostList() {

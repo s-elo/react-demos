@@ -35,7 +35,8 @@
   margin-bottom: 10px;
 }
 .app-body .form input,
-.app-body .form textarea {
+.app-body .form textarea,
+.app-body .form select {
   width: 100%;
   height: 4rem;
   padding: 0 10px;
@@ -43,9 +44,11 @@
   border-radius: 5px;
   border: 1px solid #e7e0e0;
   margin-bottom: 10px;
+  font-size: 1.5rem;
 }
 .app-body .form input:focus,
-.app-body .form textarea:focus {
+.app-body .form textarea:focus,
+.app-body .form select:focus {
   box-shadow: 0 0 2px 2px #c284fc;
 }
 .app-body .form textarea {
@@ -53,6 +56,15 @@
   min-width: 100%;
   min-height: 10rem;
   padding: 10px 10px;
+}
+.app-body .form select {
+  cursor: pointer;
+}
+.app-body .form select option {
+  display: block;
+  width: 100%;
+  height: 3rem;
+  padding: 10px;
 }
 .app-body .btn {
   width: fit-content;

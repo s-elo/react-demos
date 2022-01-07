@@ -32,7 +32,7 @@ function ReduxToolkit(props) {
     <div className="post-container">
       <Provider store={store}>
         <Header demoPath={demoPath} />
-        <main className="app-sections">
+        <main className="app-sections scroll-bar">
           <Switch>
             <Route
               exact // to match the /posts/:postId

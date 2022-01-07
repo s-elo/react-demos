@@ -1,4 +1,8 @@
 .post-container {
   width: 50rem;
-  height: fit-content;
+  max-height: fit-content;
+}
+.post-container .app-sections {
+  max-height: 31rem;
+  overflow: auto;
 }

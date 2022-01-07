@@ -125,7 +125,7 @@ const postSlice = createSlice({
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.status = "complete";
         // Add any fetched posts to the array
-        state.data = state.data.concat(action.payload);
+        state.data = action.payload;
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = "failed";

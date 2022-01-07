@@ -59,7 +59,8 @@ function AddPostForm(props: RouteComponentProps) {
           placeholder={`What's on your mind?`}
         />
         <label>Author:</label>
-        <select name="user" id="user" onChange={onUserSelected}>
+        <select name="user" id="user" onChange={onUserSelected} value={userId}>
+          <option value="" style={{ display: "none" }}></option>
           {users.map((user) => (
             <option value={user.id} key={user.id}>
               {user.name}

@@ -1,32 +1,38 @@
-import { useState } from "react";
+import { MouseEvent, ChangeEvent, useState } from "react";
+import { RouteComponentProps } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { postUpdated } from "../postSlice";
+import { RootState } from "../../../store";
 
 import "./EditPostForm.less";
 
-export default function EditPostForm(props) {
+export default function EditPostForm(
+  props: RouteComponentProps<{ postId: string }>
+) {
   const { postId } = props.match.params;
 
-  const post = useSelector((state) =>
+  const post = useSelector((state: RootState) =>
     state.posts.find((post) => post.id === postId)
   );
 
-  const [title, setTitle] = useState(post.title);
-  const [content, setContent] = useState(post.content);
+  const [title, setTitle] = useState(post ? post.title : "");
+  const [content, setContent] = useState(post ? post.content : "");
 
   const dispatch = useDispatch();
 
-  const onTitleChanged = (e) => setTitle(e.target.value);
-  const onContentChanged = (e) => setContent(e.target.value);
+  const onTitleChanged = (e: ChangeEvent<HTMLInputElement>) =>
+    setTitle(e.target.value);
+  const onContentChanged = (e: ChangeEvent<HTMLTextAreaElement>) =>
+    setContent(e.target.value);
 
-  const onSaveBtnClick = (e) => {
+  const onSaveBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     if (title.trim() === "") return alert("Please enter the title");
 
     if (content.trim() === "") return alert("Please give some content");
 
-    dispatch(postUpdated(postId, title, content, post.userId));
+    dispatch(postUpdated(postId, title, content));
 
     alert("Updated!");
   };
@@ -45,7 +51,6 @@ export default function EditPostForm(props) {
         />
         <label htmlFor="">Post Content:</label>
         <textarea
-          type="text"
           id="postContent"
           name="postContent"
           value={content}

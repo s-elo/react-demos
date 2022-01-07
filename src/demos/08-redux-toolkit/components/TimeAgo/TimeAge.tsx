@@ -1,7 +1,7 @@
 import React from "react";
 import { parseISO, formatDistanceToNow } from "date-fns";
 
-export default function TimeAge({ timestamp }) {
+export default function TimeAge({ timestamp }: { timestamp: string }) {
   let timeAgo = "";
 
   if (timestamp) {

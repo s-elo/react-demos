@@ -1,5 +1,11 @@
 import { useEffect } from "react";
-import { Route, Switch, Redirect, withRouter } from "react-router-dom";
+import {
+  Route,
+  Switch,
+  Redirect,
+  withRouter,
+  RouteComponentProps,
+} from "react-router-dom";
 import { Provider } from "react-redux";
 import Header from "./components/Header/Header";
 import PostList from "./features/posts/PostList/PostList";
@@ -13,7 +19,7 @@ import "./reduxToolkit.less";
 
 const demoPath = "/reduxToolkit";
 
-function ReduxToolkit(props) {
+function ReduxToolkit(props: RouteComponentProps) {
   // only call once
   useEffect(() => {
     const {
@@ -45,7 +51,7 @@ function ReduxToolkit(props) {
               component={PostDetail}
               key="/postDetail"
             />
-             <Route
+            <Route
               path={`${demoPath}/edit/:postId`}
               component={EditPostForm}
               key="/editPostForm"

@@ -1,5 +1,10 @@
-import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
 import { sub } from "date-fns";
+import {
+  PostAddedPayload,
+  PostUpdatedPayload,
+  ReactionAddedPayload,
+} from "./post";
 
 const initialState = [
   {
@@ -37,13 +42,13 @@ const postSlice = createSlice({
   initialState,
   reducers: {
     postAdded: {
-      reducer(state, action) {
+      reducer(state, action: PayloadAction<PostAddedPayload>) {
         state.unshift(action.payload);
       },
 
       // this callback help us create the payload object
       // so that we dont need do this every time in components
-      prepare(title, content, userId) {
+      prepare(title: string, content: string, userId: string) {
         return {
           payload: {
             id: nanoid(),
@@ -64,7 +69,7 @@ const postSlice = createSlice({
     },
 
     postUpdated: {
-      reducer(state, action) {
+      reducer(state, action: PayloadAction<PostUpdatedPayload>) {
         const { id, title, content } = action.payload;
 
         const prevPost = state.find((post) => post.id === id);
@@ -74,7 +79,7 @@ const postSlice = createSlice({
         }
       },
 
-      prepare(id, title, content, userId) {
+      prepare(id: string, title: string, content: string) {
         return {
           payload: {
             id,
@@ -85,7 +90,7 @@ const postSlice = createSlice({
       },
     },
 
-    reactionAdded(state, action) {
+    reactionAdded(state, action: PayloadAction<ReactionAddedPayload>) {
       const { id, reactName } = action.payload;
 
       const prevPost = state.find((post) => post.id === id);

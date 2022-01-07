@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { MouseEvent, ChangeEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { withRouter } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import { postAdded } from "../postSlice";
+import { RootState } from "../../../store";
 
 import "./AddPostForm.less";
 
-function AddPostForm(props) {
-  const users = useSelector((state) => state.users);
+function AddPostForm(props: RouteComponentProps) {
+  const users = useSelector((state: RootState) => state.users);
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -14,11 +15,14 @@ function AddPostForm(props) {
 
   const dispatch = useDispatch();
 
-  const onTitleChanged = (e) => setTitle(e.target.value);
-  const onContentChanged = (e) => setContent(e.target.value);
-  const onUserSelected = (e) => setUserId(e.target.value);
+  const onTitleChanged = (e: ChangeEvent<HTMLInputElement>) =>
+    setTitle(e.target.value);
+  const onContentChanged = (e: ChangeEvent<HTMLTextAreaElement>) =>
+    setContent(e.target.value);
+  const onUserSelected = (e: ChangeEvent<HTMLSelectElement>) =>
+    setUserId(e.target.value);
 
-  const onSaveBtnClick = (e) => {
+  const onSaveBtnClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     if (title.trim() === "") return alert("Please enter the title");
@@ -44,11 +48,7 @@ function AddPostForm(props) {
           placeholder={`What's on your mind?`}
         />
         <label>Author:</label>
-        <select
-          name="user"
-          id="user"
-          onChange={onUserSelected}
-        >
+        <select name="user" id="user" onChange={onUserSelected}>
           {users.map((user) => (
             <option value={user.id} key={user.id}>
               {user.name}
@@ -57,7 +57,6 @@ function AddPostForm(props) {
         </select>
         <label>Post Content:</label>
         <textarea
-          type="text"
           id="postContent"
           name="postContent"
           value={content}

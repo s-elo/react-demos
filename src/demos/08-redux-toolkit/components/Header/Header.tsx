@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./Header.less";
 
-export default function Header(props) {
+export default function Header(props: { demoPath: string }) {
   const { demoPath } = props;
 
   return (

@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { reactionAdded } from "../postSlice";
+import { Post, ReactionNames } from "../post";
 import "./PostReactBtn.less";
 
 const reactionEmoji = {
@@ -11,7 +12,7 @@ const reactionEmoji = {
   eyes: "👀",
 };
 
-export default function PostReactBtn({ post }) {
+export default function PostReactBtn({ post }: { post: Post }) {
   const dispatch = useDispatch();
 
   return (
@@ -21,11 +22,15 @@ export default function PostReactBtn({ post }) {
           className="btn emoji-btn"
           key={name}
           onClick={() =>
-            dispatch(reactionAdded({ id: post.id, reactName: name }))
+            dispatch(
+              reactionAdded({ id: post.id, reactName: name as ReactionNames })
+            )
           }
         >
           {emoji}{" "}
-          <span style={{ "fontWeight": "bold" }}>{post.reactions[name]}</span>
+          <span style={{ fontWeight: "bold" }}>
+            {post.reactions[name as ReactionNames]}
+          </span>
         </button>
       ))}
     </div>

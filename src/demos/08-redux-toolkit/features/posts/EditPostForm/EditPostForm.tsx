@@ -49,6 +49,7 @@ export default function EditPostForm(
         />
         <label htmlFor="">Post Content:</label>
         <textarea
+          className="scroll-bar"
           id="postContent"
           name="postContent"
           value={content}

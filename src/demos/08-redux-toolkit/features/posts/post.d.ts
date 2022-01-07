@@ -30,6 +30,12 @@ export type PostUpdatedPayload = {
   content: string;
 };
 
+export type PostAddedField = {
+  title: string;
+  content: string;
+  user: string;
+};
+
 export type ReactionNames = "thumbsUp" | "hooray" | "heart" | "rocket" | "eyes";
 
 export type ReactionAddedPayload = {

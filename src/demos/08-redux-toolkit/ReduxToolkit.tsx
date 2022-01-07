@@ -26,12 +26,16 @@ async function start() {
   await worker.start({ onUnhandledRequest: "bypass" });
 }
 
-start();
-
-// get the users once
-store.dispatch(fetchUsers());
+let workerStarted = false;
 
 function ReduxToolkit(props: RouteComponentProps) {
+  // only call when entering this component
+  // and only call once
+  if (!workerStarted) {
+    start();
+    workerStarted = true;
+  }
+
   // only call once
   useEffect(() => {
     const {
@@ -39,10 +43,19 @@ function ReduxToolkit(props: RouteComponentProps) {
       location: { pathname },
     } = props;
 
+    // get the users once
+    store.dispatch(fetchUsers());
+
     // only the path is /reduxToolkit
     if (pathname === demoPath) {
       history.push(`${demoPath}/posts`);
     }
+
+    // when unmount, stop the worker
+    // so that the conflit of HMR doesnt affect other demos
+    return () => {
+      worker.stop();
+    };
     // eslint-disable-next-line
   }, []);
 

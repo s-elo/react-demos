@@ -9,6 +9,7 @@ import {
   PostAddedPayload,
   PostUpdatedPayload,
   ReactionAddedPayload,
+  PostAddedField,
 } from "./post";
 import { RootState } from "../../store";
 import { client } from "../../api/client";
@@ -25,10 +26,36 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   return resp.data;
 });
 
+export const addNewPost = createAsyncThunk(
+  "posts/addNewPost",
+  async ({ title, content, user }: PostAddedField) => {
+    const newPost = {
+      id: nanoid(),
+      title,
+      content,
+      user,
+      date: new Date().toISOString(),
+      reactions: {
+        thumbsUp: 0,
+        hooray: 0,
+        heart: 0,
+        rocket: 0,
+        eyes: 0,
+      },
+    };
+
+    const resp = await client.post("/fakeApi/posts", newPost);
+
+    // The response includes the complete post object, including unique ID
+    return resp.data;
+  }
+);
+
 const postSlice = createSlice({
   name: "posts",
   initialState,
   reducers: {
+    // sync added, addNewPost is aync for AJAX
     postAdded: {
       reducer(state, action: PayloadAction<PostAddedPayload>) {
         state.data.unshift(action.payload);
@@ -90,6 +117,7 @@ const postSlice = createSlice({
 
   // for async reducers
   extraReducers(builder) {
+    // for fetch posts
     builder
       .addCase(fetchPosts.pending, (state, _) => {
         state.status = "loading";
@@ -103,6 +131,11 @@ const postSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       });
+
+    // for save post
+    builder.addCase(addNewPost.fulfilled, (state, action) => {
+      state.data.unshift(action.payload);
+    });
   },
 });
 

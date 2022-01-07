@@ -76,6 +76,11 @@
   text-decoration: none;
   display: block;
 }
+.app-body .btn:disabled {
+  cursor: default;
+  background-color: #c284fc;
+  color: #666666;
+}
 .app-body .scroll-bar::-webkit-scrollbar {
   width: 0.5rem;
   height: 0.5rem;

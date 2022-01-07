@@ -2,12 +2,12 @@ import { MouseEvent, ChangeEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { postAdded } from "../postSlice";
-import { RootState } from "../../../store";
+import { selectAllUsers } from "../../users/userSlice";
 
 import "./AddPostForm.less";
 
 function AddPostForm(props: RouteComponentProps) {
-  const users = useSelector((state: RootState) => state.users);
+  const users = useSelector(selectAllUsers);
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");

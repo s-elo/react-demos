@@ -1,8 +1,8 @@
-export type Post = {
+export type PostData = {
   id: string;
   title: string;
   content: string;
-  userId: string;
+  user: string;
   date: string;
   reactions: {
     thumbsUp: number;
@@ -13,7 +13,16 @@ export type Post = {
   };
 };
 
-export type PostAddedPayload = Post;
+export type PostFetchStatus = "idle" | "loading" | "complete" | "failed";
+export type PostFetchError = string | null | undefined;
+
+export type Post = {
+  data: PostData[];
+  status: PostFetchStatus;
+  error: PostFetchError;
+};
+
+export type PostAddedPayload = PostData;
 
 export type PostUpdatedPayload = {
   id: string;

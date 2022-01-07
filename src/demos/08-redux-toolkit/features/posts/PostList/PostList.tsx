@@ -1,18 +1,40 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import { useEffect, ReactNode } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import PostItem from "../PostItem/PostItem";
-import { RootState } from "../../../store";
+import { selectAllPosts, fetchPosts } from "../postSlice";
+import { RootState } from "@/demos/08-redux-toolkit/store";
+import { Spinner } from "@/component/Spinner/Spinner";
 import "./PostList.less";
 
 export default function PostList() {
-  const posts = useSelector((state: RootState) => state.posts);
+  const dispatch = useDispatch();
 
-  // Sort posts in reverse chronological order by datetime string
-  const orderedPosts = [...posts].sort((a, b) => b.date.localeCompare(a.date));
+  const posts = useSelector(selectAllPosts);
+  const postFetchStatus = useSelector((state: RootState) => state.posts.status);
+  const postFetchError = useSelector((state: RootState) => state.posts.error);
 
-  const renderedPosts = orderedPosts.map((post) => (
-    <PostItem post={post} key={post.id} />
-  ));
+  useEffect(() => {
+    if (postFetchStatus === "idle") {
+      dispatch(fetchPosts());
+    }
+  }, [postFetchStatus, dispatch]);
+
+  let renderedPosts: ReactNode;
+
+  if (postFetchStatus === "loading") {
+    renderedPosts = <Spinner text="Loading" />;
+  } else if (postFetchStatus === "complete") {
+    // Sort posts in reverse chronological order by datetime string
+    const orderedPosts = [...posts].sort((a, b) =>
+      b.date.localeCompare(a.date)
+    );
+
+    renderedPosts = orderedPosts.map((post) => (
+      <PostItem post={post} key={post.id} />
+    ));
+  } else if (postFetchStatus === "failed") {
+    renderedPosts = <div>{postFetchError}</div>;
+  }
 
   return <div className="post-list-container">{renderedPosts}</div>;
 }

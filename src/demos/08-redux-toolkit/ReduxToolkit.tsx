@@ -15,9 +15,21 @@ import PostDetail from "./features/posts/PostDetail/PostDetail";
 import UserList from "./features/users/UserList/UserList";
 import Notifications from "./components/Notifications/Notifications";
 import store from "./store";
+import { fetchUsers } from "./features/users/userSlice";
+import { worker } from "./api/server";
 import "./reduxToolkit.less";
 
 const demoPath = "/reduxToolkit";
+
+async function start() {
+  // Start our mock API server
+  await worker.start({ onUnhandledRequest: "bypass" });
+}
+
+start();
+
+// get the users once
+store.dispatch(fetchUsers());
 
 function ReduxToolkit(props: RouteComponentProps) {
   // only call once

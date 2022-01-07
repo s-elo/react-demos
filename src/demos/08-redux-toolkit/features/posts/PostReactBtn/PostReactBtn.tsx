@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { reactionAdded } from "../postSlice";
-import { Post, ReactionNames } from "../post";
+import { PostData, ReactionNames } from "../post";
 import "./PostReactBtn.less";
 
 const reactionEmoji = {
@@ -12,7 +12,7 @@ const reactionEmoji = {
   eyes: "👀",
 };
 
-export default function PostReactBtn({ post }: { post: Post }) {
+export default function PostReactBtn({ post }: { post: PostData }) {
   const dispatch = useDispatch();
 
   return (

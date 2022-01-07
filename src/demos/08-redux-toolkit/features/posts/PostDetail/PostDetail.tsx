@@ -4,7 +4,7 @@ import { Link, RouteComponentProps } from "react-router-dom";
 import PostAuthor from "../PostAuthor/PostAuthor";
 import TimeAge from "@/demos/08-redux-toolkit/components/TimeAgo/TimeAge";
 import PostReactBtn from "../PostReactBtn/PostReactBtn";
-import { RootState } from "../../../store";
+import { selectPostById } from "../postSlice";
 import "./PostDetail.less";
 
 export default function PostDetail(
@@ -12,9 +12,7 @@ export default function PostDetail(
 ) {
   const { postId } = props.match.params;
 
-  const post = useSelector((state: RootState) =>
-    state.posts.find((post) => post.id === postId)
-  );
+  const post = useSelector(selectPostById(postId));
 
   if (!post) {
     return <h2>Page not found...</h2>;
@@ -23,7 +21,7 @@ export default function PostDetail(
   return (
     <article className="post-detail-container">
       <h2>{post.title}</h2>
-      <PostAuthor userId={post.userId} />
+      <PostAuthor userId={post.user} />
       <TimeAge timestamp={post.date} />
       <hr style={{ margin: "5px 0" }} />
       <main>{post.content}</main>

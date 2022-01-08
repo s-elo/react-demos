@@ -5,6 +5,7 @@ export type Notification = {
   message: string;
   date: string;
   user: string;
+  isRead?: boolean;
 };
 
 export type NotificationData = Notification[];

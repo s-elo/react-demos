@@ -5,6 +5,7 @@ import {
   selectAllNotifications,
   selectNotificationFetchStatus,
   fetchNotifications,
+  markAsRead,
 } from "../notificationSlice";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import "./NotificationList.less";
@@ -21,6 +22,11 @@ export default function NotificationList() {
     if (notificationFetchStatus === "idle") {
       dispatch(fetchNotifications());
     }
+
+    // mark as been read
+    return () => {
+      dispatch(markAsRead());
+    };
     // eslint-disable-next-line
   }, []);
 
@@ -31,7 +37,14 @@ export default function NotificationList() {
       name: "Unknown User",
     };
     return (
-      <li key={notification.id}>
+      <li
+        key={notification.id}
+        style={{
+          backgroundColor: notification.isRead
+            ? "rgb(230, 224, 224)"
+            : "#b56ef8",
+        }}
+      >
         <div>
           <b>{user.name}</b> {notification.message}
         </div>
@@ -49,6 +62,8 @@ export default function NotificationList() {
   );
 
   const fetchNewNotifications = async () => {
+    // before fetch more, mark the existed as read
+    dispatch(markAsRead());
     dispatch(fetchNotifications());
   };
 

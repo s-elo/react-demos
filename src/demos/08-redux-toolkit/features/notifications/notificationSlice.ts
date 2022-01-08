@@ -1,7 +1,7 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 import { client } from "../../api/client";
-import { Notifications } from "./notifications";
+import { NotificationData, Notifications } from "./notifications";
 import { Post } from "../posts/post";
 import { Users } from "../users/user";
 
@@ -28,23 +28,39 @@ const slice = createSlice({
     status: "idle",
     error: null,
   } as Notifications,
-  reducers: {},
+  reducers: {
+    markAsRead(state) {
+      state.data.forEach((notification) => {
+        notification.isRead = true;
+      });
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchNotifications.pending, (state, _) => {
         state.status = "loading";
       })
-      .addCase(fetchNotifications.fulfilled, (state, action) => {
-        state.status = "complete";
-        state.data.push(...action.payload);
-        // Sort with newest first
-        state.data.sort((a, b) => b.date.localeCompare(a.date));
-      })
+      .addCase(
+        fetchNotifications.fulfilled,
+        (state, action: PayloadAction<NotificationData>) => {
+          state.status = "complete";
+          // newly fetched mark as no read
+          action.payload.forEach((notification) => {
+            notification.isRead = false;
+          });
+
+          state.data.push(...action.payload);
+          // Sort with newest first
+          state.data.sort((a, b) => b.date.localeCompare(a.date));
+        }
+      )
       .addCase(fetchNotifications.rejected, (state, _) => {
         state.status = "failed";
       });
   },
 });
+
+export const { markAsRead } = slice.actions;
 
 export default slice.reducer;
 

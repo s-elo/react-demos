@@ -6,17 +6,22 @@ import {
   selectUserFetchStatus,
   fetchUsers,
 } from "../userSlice";
-import "./UserList.less";
+import { selectPostFetchStatus, fetchPosts } from "../../posts/postSlice";
 import { Spinner } from "@/component/Spinner/Spinner";
+import "./UserList.less";
 
 export default function UserList() {
   const users = useSelector(selectAllUsers);
   const userFetchStatus = useSelector(selectUserFetchStatus);
-
+  const postFetchStatus = useSelector(selectPostFetchStatus);
   const dispatch = useDispatch();
 
   if (userFetchStatus === "idle") {
     dispatch(fetchUsers());
+  }
+
+  if (postFetchStatus === "idle") {
+    dispatch(fetchPosts());
   }
 
   const renderedUsers = users.map((user) => (

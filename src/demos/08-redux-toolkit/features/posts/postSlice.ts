@@ -3,6 +3,7 @@ import {
   nanoid,
   createAsyncThunk,
   PayloadAction,
+  createSelector,
 } from "@reduxjs/toolkit";
 import {
   Post,
@@ -144,7 +145,16 @@ const postSlice = createSlice({
 export const { postAdded, postUpdated, reactionAdded } = postSlice.actions;
 
 export const selectAllPosts = (state: RootState) => state.posts.data;
+export const selectPostFetchStatus = (state: RootState) => state.posts.status;
 export const selectPostById = (postId: string) => (state: RootState) =>
   state.posts.data.find((post) => post.id === postId);
+
+// here using the posts.filter which will return a new reference
+// and it leads to rerender even the posts doesnt change when other states changed in other places
+// createSelector can return a memorized selector to avoid this unneccessary rerender
+export const selectPostByUser = (userId: string) =>
+  createSelector([selectAllPosts], (posts) =>
+    posts.filter((post) => post.user === userId)
+  );
 
 export default postSlice.reducer;

@@ -6,7 +6,7 @@ import {
   withRouter,
   RouteComponentProps,
 } from "react-router-dom";
-import { Provider, useSelector } from "react-redux";
+import { Provider } from "react-redux";
 import Header from "./components/Header/Header";
 import PostList from "./features/posts/PostList/PostList";
 import AddPostForm from "./features/posts/AddPostForm/AddPostForm";

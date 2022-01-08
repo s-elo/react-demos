@@ -72,26 +72,31 @@ function ReduxToolkit(props: RouteComponentProps) {
               key="/posts"
             />
             <Route
+              exact
               path={`${demoPath}/posts/:postId`}
               component={PostDetail}
               key="/postDetail"
             />
             <Route
+              exact
               path={`${demoPath}/edit/:postId`}
               component={EditPostForm}
               key="/editPostForm"
             />
             <Route
+              exact
               path={`${demoPath}/addPost`}
               component={AddPostForm}
               key="/addPost"
             />
             <Route
+              exact
               path={`${demoPath}/users`}
               component={UserList}
               key="/users"
             />
             <Route
+              exact
               path={`${demoPath}/notifications`}
               component={Notifications}
               key="/notifications"

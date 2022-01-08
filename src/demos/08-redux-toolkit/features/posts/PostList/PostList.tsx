@@ -24,14 +24,7 @@ export default function PostList() {
   if (postFetchStatus === "loading") {
     renderedPosts = <Spinner text="Loading" />;
   } else if (postFetchStatus === "complete") {
-    // Sort posts in reverse chronological order by datetime string
-    const orderedPosts = [...posts].sort((a, b) =>
-      b.date.localeCompare(a.date)
-    );
-
-    renderedPosts = orderedPosts.map((post) => (
-      <PostItem post={post} key={post.id} />
-    ));
+    renderedPosts = posts.map((post) => <PostItem post={post} key={post.id} />);
   } else if (postFetchStatus === "failed") {
     renderedPosts = <div>{postFetchError}</div>;
   }

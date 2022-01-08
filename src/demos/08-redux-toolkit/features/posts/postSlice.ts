@@ -126,6 +126,8 @@ const postSlice = createSlice({
         state.status = "complete";
         // Add any fetched posts to the array
         state.data = action.payload;
+        // Sort posts in reverse chronological order by datetime string
+        state.data.sort((a, b) => b.date.localeCompare(a.date));
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = "failed";

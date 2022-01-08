@@ -1,6 +1,6 @@
-export type UserData = {
+export type User = {
   id: string;
   name: string;
 };
 
-export type User = UserData[];
+export type Users = User[];

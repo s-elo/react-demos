@@ -13,7 +13,8 @@ import AddPostForm from "./features/posts/AddPostForm/AddPostForm";
 import EditPostForm from "./features/posts/EditPostForm/EditPostForm";
 import PostDetail from "./features/posts/PostDetail/PostDetail";
 import UserList from "./features/users/UserList/UserList";
-import Notifications from "./components/Notifications/Notifications";
+import UserPage from "./features/users/UserPage/UserPage";
+import NotificationList from "./features/notifications/NotificationList/NotificationList";
 import store from "./store";
 import { fetchUsers } from "./features/users/userSlice";
 import { worker } from "./api/server";
@@ -55,6 +56,7 @@ function ReduxToolkit(props: RouteComponentProps) {
     // so that the conflit of HMR doesnt affect other demos
     return () => {
       worker.stop();
+      workerStarted = false;
     };
     // eslint-disable-next-line
   }, []);
@@ -97,8 +99,14 @@ function ReduxToolkit(props: RouteComponentProps) {
             />
             <Route
               exact
+              path={`${demoPath}/users/:userId`}
+              component={UserPage}
+              key="/users"
+            />
+            <Route
+              exact
               path={`${demoPath}/notifications`}
-              component={Notifications}
+              component={NotificationList}
               key="/notifications"
             />
             {/* when the above does not match */}

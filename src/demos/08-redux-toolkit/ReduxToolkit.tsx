@@ -6,7 +6,7 @@ import {
   withRouter,
   RouteComponentProps,
 } from "react-router-dom";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import Header from "./components/Header/Header";
 import PostList from "./features/posts/PostList/PostList";
 import AddPostForm from "./features/posts/AddPostForm/AddPostForm";
@@ -16,7 +16,6 @@ import UserList from "./features/users/UserList/UserList";
 import UserPage from "./features/users/UserPage/UserPage";
 import NotificationList from "./features/notifications/NotificationList/NotificationList";
 import store from "./store";
-import { fetchUsers } from "./features/users/userSlice";
 import { worker } from "./api/server";
 import "./reduxToolkit.less";
 
@@ -43,9 +42,6 @@ function ReduxToolkit(props: RouteComponentProps) {
       history,
       location: { pathname },
     } = props;
-
-    // get the users once
-    store.dispatch(fetchUsers());
 
     // only the path is /reduxToolkit
     if (pathname === demoPath) {

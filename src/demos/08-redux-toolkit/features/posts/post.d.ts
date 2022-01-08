@@ -1,3 +1,5 @@
+import { FetchData } from "../../type";
+
 export type PostData = {
   id: string;
   title: string;
@@ -13,14 +15,7 @@ export type PostData = {
   };
 };
 
-export type PostFetchStatus = "idle" | "loading" | "complete" | "failed";
-export type PostFetchError = string | null | undefined;
-
-export type Post = {
-  data: PostData[];
-  status: PostFetchStatus;
-  error: PostFetchError;
-};
+export type Post = FetchData<PostData[]>;
 
 export type PostAddedPayload = PostData;
 

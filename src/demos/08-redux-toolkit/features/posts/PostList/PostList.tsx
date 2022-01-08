@@ -4,6 +4,7 @@ import PostItem from "../PostItem/PostItem";
 import { selectAllPosts, fetchPosts } from "../postSlice";
 import { RootState } from "@/demos/08-redux-toolkit/store";
 import { Spinner } from "@/component/Spinner/Spinner";
+import { fetchUsers } from "../../users/userSlice";
 import "./PostList.less";
 
 export default function PostList() {
@@ -12,12 +13,18 @@ export default function PostList() {
   const posts = useSelector(selectAllPosts);
   const postFetchStatus = useSelector((state: RootState) => state.posts.status);
   const postFetchError = useSelector((state: RootState) => state.posts.error);
+  const userFetchStatus = useSelector((state: RootState) => state.users.status);
 
   useEffect(() => {
     if (postFetchStatus === "idle") {
       dispatch(fetchPosts());
     }
-  }, [postFetchStatus, dispatch]);
+
+    if (userFetchStatus === "idle") {
+      dispatch(fetchUsers());
+    }
+    // eslint-disable-next-line
+  }, []);
 
   let renderedPosts: ReactNode;
 

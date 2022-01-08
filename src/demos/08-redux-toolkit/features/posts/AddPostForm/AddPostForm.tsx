@@ -2,13 +2,18 @@ import { MouseEvent, ChangeEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { addNewPost } from "../postSlice";
-import { selectAllUsers } from "../../users/userSlice";
+import {
+  selectAllUsers,
+  selectUserFetchStatus,
+  fetchUsers,
+} from "../../users/userSlice";
 import { Spinner } from "@/component/Spinner/Spinner";
 
 import "./AddPostForm.less";
 
 function AddPostForm(props: RouteComponentProps) {
   const users = useSelector(selectAllUsers);
+  const userFetchStatus = useSelector(selectUserFetchStatus);
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -16,6 +21,10 @@ function AddPostForm(props: RouteComponentProps) {
   const [addStatus, setAddStatus] = useState("idle");
 
   const dispatch = useDispatch();
+
+  if (userFetchStatus === "idle") {
+    dispatch(fetchUsers());
+  }
 
   const onTitleChanged = (e: ChangeEvent<HTMLInputElement>) =>
     setTitle(e.target.value);

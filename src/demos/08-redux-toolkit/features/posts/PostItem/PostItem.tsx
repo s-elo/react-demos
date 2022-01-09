@@ -6,7 +6,7 @@ import PostReactBtn from "../PostReactBtn/PostReactBtn";
 import { PostData } from "../post";
 import "./PostItem.less";
 
-export default function PostItem(props: { post: PostData }) {
+function PostItem(props: { post: PostData }) {
   const { post } = props;
 
   const detailPath = `/reduxToolkit/posts/${post.id}`;
@@ -25,3 +25,6 @@ export default function PostItem(props: { post: PostData }) {
     </article>
   );
 }
+
+// just like pureComponent for class component
+export default React.memo(PostItem);

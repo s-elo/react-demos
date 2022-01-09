@@ -1,16 +1,26 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  createEntityAdapter,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 import { client } from "../../api/client";
-import { NotificationData, Notifications } from "./notifications";
-import { Post } from "../posts/post";
-import { Users } from "../users/user";
+import { NotificationData, NotificationExtraField } from "./notifications";
+
+const notificationAdapter = createEntityAdapter<NotificationData>({
+  sortComparer: (a, b) => b.date.localeCompare(a.date),
+});
+
+const initialState = notificationAdapter.getInitialState({
+  status: "idle",
+  error: null,
+} as NotificationExtraField);
 
 export const fetchNotifications = createAsyncThunk(
   "notifications/fetchNotifications",
   async (_, { getState }) => {
-    const allNotifications = selectAllNotifications(
-      getState() as { posts: Post; users: Users; notifications: Notifications }
-    );
+    const allNotifications = selectAllNotifications(getState() as RootState);
     const latestNotification = allNotifications[0];
     const latestTimestamp = latestNotification ? latestNotification.date : "";
     const response = await client.get(
@@ -23,15 +33,11 @@ export const fetchNotifications = createAsyncThunk(
 
 const slice = createSlice({
   name: "notifications",
-  initialState: {
-    data: [],
-    status: "idle",
-    error: null,
-  } as Notifications,
+  initialState,
   reducers: {
     markAsRead(state) {
-      state.data.forEach((notification) => {
-        notification.isRead = true;
+      Object.values(state.entities).forEach((notification) => {
+        notification!.isRead = true;
       });
     },
   },
@@ -42,16 +48,14 @@ const slice = createSlice({
       })
       .addCase(
         fetchNotifications.fulfilled,
-        (state, action: PayloadAction<NotificationData>) => {
+        (state, action: PayloadAction<NotificationData[]>) => {
           state.status = "complete";
           // newly fetched mark as no read
           action.payload.forEach((notification) => {
             notification.isRead = false;
           });
 
-          state.data.push(...action.payload);
-          // Sort with newest first
-          state.data.sort((a, b) => b.date.localeCompare(a.date));
+          notificationAdapter.upsertMany(state, action.payload);
         }
       )
       .addCase(fetchNotifications.rejected, (state, _) => {
@@ -64,8 +68,7 @@ export const { markAsRead } = slice.actions;
 
 export default slice.reducer;
 
-export const selectAllNotifications = (state: RootState) =>
-  state.notifications.data;
-
+export const { selectAll: selectAllNotifications } =
+  notificationAdapter.getSelectors((state: RootState) => state.notifications);
 export const selectNotificationFetchStatus = (state: RootState) =>
   state.notifications.status;

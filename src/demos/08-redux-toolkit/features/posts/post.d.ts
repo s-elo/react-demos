@@ -17,6 +17,8 @@ export type PostData = {
 
 export type Post = FetchData<PostData[]>;
 
+export type PostExtraField = Omit<FetchData<PostData[]>, "data">;
+
 export type PostAddedPayload = PostData;
 
 export type PostUpdatedPayload = {

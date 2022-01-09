@@ -4,9 +4,12 @@ import {
   createAsyncThunk,
   PayloadAction,
   createSelector,
+  createEntityAdapter,
+  EntityId,
 } from "@reduxjs/toolkit";
 import {
-  Post,
+  PostData,
+  PostExtraField,
   PostAddedPayload,
   PostUpdatedPayload,
   ReactionAddedPayload,
@@ -15,11 +18,19 @@ import {
 import { RootState } from "../../store";
 import { client } from "../../api/client";
 
-const initialState: Post = {
-  data: [],
+// instead of using array, now using Map kind of method to store the data
+// so that we can get the item by id without iterating the entire array
+const postAdapter = createEntityAdapter<PostData>({
+  // Sort posts in reverse chronological order by datetime string
+  sortComparer: (a, b) => b.date.localeCompare(a.date),
+});
+
+// {status: 'idle', error: null} is the extra field plus entities field
+// The type of the state is inferred here
+const initialState = postAdapter.getInitialState({
   status: "idle",
   error: null,
-};
+} as PostExtraField);
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   const resp = await client.get("/fakeApi/posts");
@@ -59,7 +70,7 @@ const postSlice = createSlice({
     // sync added, addNewPost is aync for AJAX
     postAdded: {
       reducer(state, action: PayloadAction<PostAddedPayload>) {
-        state.data.unshift(action.payload);
+        state.entities[action.payload.id] = action.payload;
       },
 
       // this callback help us create the payload object
@@ -88,7 +99,7 @@ const postSlice = createSlice({
       reducer(state, action: PayloadAction<PostUpdatedPayload>) {
         const { id, title, content } = action.payload;
 
-        const prevPost = state.data.find((post) => post.id === id);
+        const prevPost = state.entities[id];
         if (prevPost) {
           prevPost.title = title;
           prevPost.content = content;
@@ -109,7 +120,7 @@ const postSlice = createSlice({
     reactionAdded(state, action: PayloadAction<ReactionAddedPayload>) {
       const { id, reactName } = action.payload;
 
-      const prevPost = state.data.find((post) => post.id === id);
+      const prevPost = state.entities[id];
       if (prevPost) {
         prevPost.reactions[reactName]++;
       }
@@ -126,9 +137,9 @@ const postSlice = createSlice({
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.status = "complete";
         // Add any fetched posts to the array
-        state.data = action.payload;
-        // Sort posts in reverse chronological order by datetime string
-        state.data.sort((a, b) => b.date.localeCompare(a.date));
+        // if there's any items in action.payload that already existing in our state,
+        // the upsertMany function will merge them together based on matching IDs
+        postAdapter.upsertMany(state, action.payload);
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = "failed";
@@ -136,18 +147,26 @@ const postSlice = createSlice({
       });
 
     // for save post
-    builder.addCase(addNewPost.fulfilled, (state, action) => {
-      state.data.unshift(action.payload);
-    });
+    // Use the `addOne` reducer for the fulfilled case
+    builder.addCase(addNewPost.fulfilled, postAdapter.addOne);
   },
 });
 
 export const { postAdded, postUpdated, reactionAdded } = postSlice.actions;
 
-export const selectAllPosts = (state: RootState) => state.posts.data;
+// Export the customized selectors for this adapter using `getSelectors`
+const {
+  selectAll,
+  selectById,
+  selectIds,
+  // Pass in a selector that returns the posts slice of state
+} = postAdapter.getSelectors((state: RootState) => state.posts);
+
+export const selectAllPosts = selectAll;
+export const selectPostById = (postId: EntityId) => (state: RootState) =>
+  selectById(state, postId);
+export const selectPostIds = selectIds;
 export const selectPostFetchStatus = (state: RootState) => state.posts.status;
-export const selectPostById = (postId: string) => (state: RootState) =>
-  state.posts.data.find((post) => post.id === postId);
 
 // here using the posts.filter which will return a new reference
 // and it leads to rerender even the posts doesnt change when other states changed in other places

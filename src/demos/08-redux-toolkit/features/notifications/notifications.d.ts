@@ -1,6 +1,6 @@
 import { FetchData } from "../../type";
 
-export type Notification = {
+export type NotificationData = {
   id: string;
   message: string;
   date: string;
@@ -8,6 +8,9 @@ export type Notification = {
   isRead?: boolean;
 };
 
-export type NotificationData = Notification[];
+export type Notifications = FetchData<NotificationData[]>;
 
-export type Notifications = FetchData<NotificationData>;
+export type NotificationExtraField = Omit<
+  FetchData<NotificationData[]>,
+  "data"
+>;

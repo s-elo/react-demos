@@ -1,15 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import PostAuthor from "../PostAuthor/PostAuthor";
 import TimeAge from "@/demos/08-redux-toolkit/components/TimeAgo/TimeAge";
 import PostReactBtn from "../PostReactBtn/PostReactBtn";
 import { PostData } from "../post";
+import { selectPostById } from "../postSlice";
 import "./PostItem.less";
+import { EntityId } from "@reduxjs/toolkit";
 
-function PostItem(props: { post: PostData }) {
-  const { post } = props;
+export default function PostItem({ postId }: { postId: EntityId }) {
+  // now using the normalized data to find the item
+  // instead of array
+  const post = useSelector(selectPostById(postId)) as PostData;
 
-  const detailPath = `/reduxToolkit/posts/${post.id}`;
+  const detailPath = `/reduxToolkit/posts/${postId}`;
 
   return (
     <article className="post-excerpt">
@@ -27,4 +32,4 @@ function PostItem(props: { post: PostData }) {
 }
 
 // just like pureComponent for class component
-export default React.memo(PostItem);
+// export default React.memo(PostItem);

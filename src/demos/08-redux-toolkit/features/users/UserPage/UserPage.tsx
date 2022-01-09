@@ -8,11 +8,11 @@ export default function UserPage(
   props: RouteComponentProps<{ userId: string }>
 ) {
   const { userId } = props.match.params;
-  
+
   const posts = useSelector(selectPostByUser(userId));
-  
+
   const renderedPosts = posts.map((post) => (
-    <PostItem key={post.id} post={post} />
+    <PostItem key={post.id} postId={post.id} />
   ));
 
   return <div>{renderedPosts}</div>;

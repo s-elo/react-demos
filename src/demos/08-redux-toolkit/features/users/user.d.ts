@@ -1,10 +1,10 @@
 import { FetchData } from "../../type";
 
-export type User = {
+export type UserData = {
   id: string;
   name: string;
 };
 
-export type UserData = User[];
+export type Users = FetchData<UserData[]>;
 
-export type Users = FetchData<UserData>;
+export type UserExtraField = Omit<FetchData<UserData[]>, "data">;

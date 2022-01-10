@@ -1,9 +1,9 @@
 import { MouseEvent, ChangeEvent, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { postUpdated } from "../postSlice";
-import { selectPostById } from "../postSlice";
-
+// import { selectPostById } from "../postSlice";
+import { useGetPostQuery } from "../../api/apiSlice";
 import "./EditPostForm.less";
 
 export default function EditPostForm(
@@ -11,7 +11,9 @@ export default function EditPostForm(
 ) {
   const { postId } = props.match.params;
 
-  const post = useSelector(selectPostById(postId));
+  // const post = useSelector(selectPostById(postId));
+
+  const { data: post } = useGetPostQuery(postId);
 
   const [title, setTitle] = useState(post ? post.title : "");
   const [content, setContent] = useState(post ? post.content : "");

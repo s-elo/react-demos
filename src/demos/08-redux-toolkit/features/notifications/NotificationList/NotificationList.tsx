@@ -9,7 +9,7 @@ import {
 } from "../notificationSlice";
 import { formatDistanceToNow, parseISO } from "date-fns";
 import "./NotificationList.less";
-import { Spinner } from "@/component/Spinner/Spinner";
+import Spinner from "@/component/Spinner/Spinner";
 
 export default function NotificationList() {
   const notifications = useSelector(selectAllNotifications);

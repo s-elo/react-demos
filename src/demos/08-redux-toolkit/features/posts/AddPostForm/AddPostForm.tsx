@@ -1,13 +1,14 @@
 import { MouseEvent, ChangeEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { addNewPost } from "../postSlice";
+// import { addNewPost } from "../postSlice";
 import {
   selectAllUsers,
   selectUserFetchStatus,
   fetchUsers,
 } from "../../users/userSlice";
-import { Spinner } from "@/component/Spinner/Spinner";
+import { useAddNewPostMutation } from "../../api/apiSlice";
+import Spinner from "@/component/Spinner/Spinner";
 
 import "./AddPostForm.less";
 
@@ -15,16 +16,17 @@ function AddPostForm(props: RouteComponentProps) {
   const users = useSelector(selectAllUsers);
   const userFetchStatus = useSelector(selectUserFetchStatus);
 
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [userId, setUserId] = useState(users[0] ? users[0].id : "");
-  const [addStatus, setAddStatus] = useState("idle");
-
   const dispatch = useDispatch();
 
   if (userFetchStatus === "idle") {
     dispatch(fetchUsers());
   }
+
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [userId, setUserId] = useState("");
+
+  const [addNewPost, { isLoading }] = useAddNewPostMutation();
 
   const onTitleChanged = (e: ChangeEvent<HTMLInputElement>) =>
     setTitle(e.target.value);
@@ -43,8 +45,9 @@ function AddPostForm(props: RouteComponentProps) {
     if (userId.trim() === "") return alert("Please select the user");
 
     try {
-      setAddStatus("pending");
-      await dispatch(addNewPost({ title, content, user: userId }));
+      // setAddStatus("pending");
+      // await dispatch(addNewPost({ title, content, user: userId }));
+      await addNewPost({ title, content, user: userId }).unwrap();
 
       // alert("Added!");
       // jump to the /posts
@@ -85,14 +88,10 @@ function AddPostForm(props: RouteComponentProps) {
           onChange={onContentChanged}
         />
         <div style={{ display: "flex" }}>
-          <button
-            className="btn"
-            onClick={onSaveBtnClick}
-            disabled={addStatus === "pending"}
-          >
+          <button className="btn" onClick={onSaveBtnClick} disabled={isLoading}>
             Save
           </button>
-          {addStatus === "pending" ? (
+          {isLoading ? (
             <span style={{ display: "inline-block" }}>
               <Spinner size={"2em"} />
             </span>

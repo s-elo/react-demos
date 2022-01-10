@@ -1,20 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import PostAuthor from "../PostAuthor/PostAuthor";
 import TimeAge from "@/demos/08-redux-toolkit/components/TimeAgo/TimeAge";
 import PostReactBtn from "../PostReactBtn/PostReactBtn";
 import { PostData } from "../post";
-import { selectPostById } from "../postSlice";
+// import { selectPostById } from "../postSlice";
 import "./PostItem.less";
-import { EntityId } from "@reduxjs/toolkit";
+// import { EntityId } from "@reduxjs/toolkit";
 
-export default function PostItem({ postId }: { postId: EntityId }) {
+export default function PostItem({ post }: { post: PostData }) {
   // now using the normalized data to find the item
   // instead of array
-  const post = useSelector(selectPostById(postId)) as PostData;
-
-  const detailPath = `/reduxToolkit/posts/${postId}`;
+  // const post = useSelector(selectPostById(postId)) as PostData;
+  const detailPath = `/reduxToolkit/posts/${post.id}`;
 
   return (
     <article className="post-excerpt">

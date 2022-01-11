@@ -39,7 +39,7 @@ export default function PostList() {
     isError,
     // error,
     // refetch
-  } = useGetPostsQuery(null);
+  } = useGetPostsQuery();
 
   // to avoid sorting every time re-render
   // unless posts has been changed

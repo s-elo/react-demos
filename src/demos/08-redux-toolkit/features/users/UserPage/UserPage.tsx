@@ -17,7 +17,7 @@ export default function UserPage(
     isFetching,
     isSuccess,
     isError,
-  } = useGetPostsQuery(null);
+  } = useGetPostsQuery();
 
   const filteredPosts = useMemo(() => {
     console.log("call");

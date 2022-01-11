@@ -184,7 +184,8 @@ export const handlers = [
 
   rest.post("/fakeApi/posts/:postId/reactions", (req, res, ctx) => {
     const postId = req.params.postId;
-    const reaction = req.body.reaction;
+    const reaction = req.body.reactName;
+    
     const post = db.post.findFirst({
       where: { id: { equals: postId } },
     });

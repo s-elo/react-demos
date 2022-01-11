@@ -14,7 +14,8 @@ export default function UserPage(
   // const posts = useSelector(selectPostByUser(userId));
   const {
     data: posts = [],
-    isFetching,
+    isLoading,
+    // isFetching,
     isSuccess,
     isError,
   } = useGetPostsQuery();
@@ -25,7 +26,7 @@ export default function UserPage(
   }, [posts, userId]);
 
   let renderedPosts;
-  if (isFetching) {
+  if (isLoading) {
     renderedPosts = <Spinner />;
   } else if (isSuccess) {
     if (filteredPosts.length === 0) {

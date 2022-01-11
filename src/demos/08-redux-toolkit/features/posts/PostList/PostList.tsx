@@ -34,7 +34,8 @@ export default function PostList() {
   // unless the arg changes or using refetch func, it wont re-fetch
   const {
     data: posts = [],
-    isLoading,
+    isLoading, // only once for first time
+    // isFetching,
     isSuccess,
     isError,
     // error,
@@ -43,10 +44,10 @@ export default function PostList() {
 
   // to avoid sorting every time re-render
   // unless posts has been changed
-  const sortedPosts = useMemo(() => {            
+  const sortedPosts = useMemo(() => {
     const sortedPosts = posts.slice();
     // Sort posts in descending chronological order
-    sortedPosts.sort((a, b) => b.date.localeCompare(a.date));    
+    sortedPosts.sort((a, b) => b.date.localeCompare(a.date));
     return sortedPosts;
   }, [posts]);
 

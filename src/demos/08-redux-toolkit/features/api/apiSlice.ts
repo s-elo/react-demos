@@ -1,5 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { PostAddedField, PostUpdatedPayload, PostData } from "../posts/post";
+import {
+  PostAddedField,
+  PostUpdatedPayload,
+  ReactionAddedPayload,
+  PostData,
+} from "../posts/post";
 
 export const apiSlice = createApi({
   // The cache reducer expects to be added at `state.api` (already default - this is optional)
@@ -29,10 +34,8 @@ export const apiSlice = createApi({
     }),
     getPost: builder.query<PostData, string>({
       query: (postId) => `/posts/${postId}`,
-      providesTags: (queryRet, error, queryArg) =>
-        queryRet
-          ? ["Posts", { type: "Posts" as "Posts", id: queryRet.id }]
-          : ["Posts"],
+      providesTags: (queryRet, _, __) =>
+        queryRet ? ["Posts", { type: "Posts", id: queryRet.id }] : ["Posts"],
     }),
     addNewPost: builder.mutation<
       unknown,
@@ -56,7 +59,34 @@ export const apiSlice = createApi({
         method: "PATCH",
         body: post,
       }),
-      invalidatesTags: (result, error, arg) => [{ type: "Posts", id: arg.id }],
+      invalidatesTags: (_, __, arg) => [{ type: "Posts", id: arg.id }],
+    }),
+    addReaction: builder.mutation<unknown, ReactionAddedPayload>({
+      query: ({ id, reactName }) => ({
+        url: `/posts/${id}/reactions`,
+        method: "POST",
+        body: { reactName },
+      }),
+      // for optimistic updates
+      async onQueryStarted({ id, reactName }, { dispatch, queryFulfilled }) {
+        // `updateQueryData` requires the endpoint name and cache key arguments,
+        // so it knows which piece of cache state to update
+        const patchResult = dispatch(
+          apiSlice.util.updateQueryData("getPosts", undefined, (draft) => {
+            // The `draft` is Immer-wrapped and can be "mutated" like in createSlice
+            const post = draft.find((post) => post.id === id);
+            if (post) {
+              post.reactions[reactName]++;
+            }
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+      invalidatesTags: (_, __, arg) => ["Posts", { type: "Posts", id: arg.id }],
     }),
   }),
 });
@@ -68,4 +98,5 @@ export const {
   useGetPostQuery,
   useAddNewPostMutation,
   useEditPostMutation,
+  useAddReactionMutation,
 } = apiSlice;

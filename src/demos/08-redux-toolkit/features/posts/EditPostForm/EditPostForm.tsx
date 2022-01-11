@@ -1,6 +1,6 @@
 import { MouseEvent, ChangeEvent, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 // import { postUpdated } from "../postSlice";
 // import { selectPostById } from "../postSlice";
 import { useEditPostMutation, useGetPostQuery } from "../../api/apiSlice";
@@ -20,7 +20,7 @@ export default function EditPostForm(
   const [title, setTitle] = useState(post ? post.title : "");
   const [content, setContent] = useState(post ? post.content : "");
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const onTitleChanged = (e: ChangeEvent<HTMLInputElement>) =>
     setTitle(e.target.value);

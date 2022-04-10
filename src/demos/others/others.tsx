@@ -7,7 +7,7 @@ import PureComDemo from "./05-pureComponent";
 import ErrorBoundary from "./07-errorBoundary/index";
 import RenderProp from "./06-render_prop(slot)";
 import Portal from "./08-portal/PortalDemo";
-
+import ResizeLayout from "./09-resizeLayout";
 import "./others.less";
 
 const linkStyle = {
@@ -54,6 +54,11 @@ const demos = [
     path: "/others/portalDemo",
     name: "portal demo",
     component: Portal,
+  },
+  {
+    path: "/others/resizeLayout",
+    name: "resizable layout",
+    component: ResizeLayout,
   },
 ];
 

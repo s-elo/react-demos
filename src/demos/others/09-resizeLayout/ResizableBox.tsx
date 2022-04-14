@@ -3,24 +3,35 @@ import ResizeBar from "./ResizeBar";
 import "./ResizableBox.less";
 
 export type ResizableBoxProps = {
-  leftBox: () => React.ComponentElement<any, any>;
-  rightBox: () => React.ComponentElement<any, any>;
+  children: React.ReactChild[];
 };
 
-export default function ResizableBox({ leftBox, rightBox }: ResizableBoxProps) {
+export default function ResizableBox({ children }: ResizableBoxProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [rightWidth, setRightWidth] = useState("50%");
+  const [widths, setWidths] = useState<number[]>(
+    new Array(children.length).fill(1 / children.length)
+  );
+
+  const tostr = (n: number) => `${(n * 100 - 1.5).toFixed(2)}%`;
 
   return (
     <div className="resizable-box" ref={containerRef}>
-      {leftBox()}
-      <ResizeBar
-        containerRef={containerRef}
-        widthChange={(rightWidth) => setRightWidth(rightWidth)}
-      />
-      <div className="right-container" style={{ width: rightWidth }}>
-        {rightBox()}
-      </div>
+      {children.map((box, idx) => (
+        <React.Fragment key={idx}>
+          <div style={{ width: tostr(widths[idx]) }}>{box}</div>
+
+          {idx !== children.length - 1 ? (
+            <ResizeBar
+              containerRef={containerRef}
+              widthChange={(widths) => setWidths(widths)}
+              idx={idx + 1}
+              widths={widths}
+            />
+          ) : (
+            ""
+          )}
+        </React.Fragment>
+      ))}
     </div>
   );
 }

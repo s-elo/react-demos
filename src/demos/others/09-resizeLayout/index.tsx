@@ -6,16 +6,18 @@ export default function ResizeLayout() {
   const leftRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column'}}>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <div>
         <Link to="/others/resizeLayout/right">right</Link>
         <Link to="/others/resizeLayout/left">left</Link>
       </div>
       <div style={{ width: "800px" }}>
-        <ResizableBox
-          leftBox={() => <LeftBox ref={leftRef} />}
-          rightBox={() => <RightBox leftRef={leftRef} />}
-        />
+        <ResizableBox>
+          <LeftBox ref={leftRef} />
+          <RightBox leftRef={leftRef} />
+          <LeftBox ref={leftRef} />
+          <LeftBox ref={leftRef} />
+        </ResizableBox>
       </div>
     </div>
   );

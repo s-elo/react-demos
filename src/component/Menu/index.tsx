@@ -80,7 +80,11 @@ class Menu extends React.Component<RouteComponentProps & Props> {
   isMenuPath = (menuPath: string) => {
     // when it is a root path,
     // show the menu instead of the items
-    return this.props.location.pathname === menuPath;
+    console.log(this.props.location.pathname);
+    return (
+      this.props.location.pathname === menuPath ||
+      this.props.location.pathname === "/react-demos"
+    );
   };
 
   render() {

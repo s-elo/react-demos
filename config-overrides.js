@@ -1,14 +1,6 @@
-// const rewireLess = require('react-app-rewire-less');
-
-// module.exports = function override(config, env) {
-//   // config.module.rules.push({
-//   //   test: /\.tsx?$/,
-//   //   loader: "awesome-typescript-loader",
-//   // });
-//   return rewireLess(config, env);
-// };
 const path = require("path");
-const { addLessLoader, override, addWebpackAlias } = require("customize-cra");
+const { override, addWebpackAlias } = require("customize-cra");
+const addLessLoader = require("customize-cra-less-loader");
 
 module.exports = override(
   addLessLoader(),

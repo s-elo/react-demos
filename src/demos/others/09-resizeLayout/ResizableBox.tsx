@@ -12,7 +12,7 @@ export default function ResizableBox({ children }: ResizableBoxProps) {
     new Array(children.length).fill(1 / children.length)
   );
 
-  const tostr = (n: number) => `${(n * 100 - 1.5).toFixed(2)}%`;
+  const tostr = (n: number) => `${(n * 100).toFixed(2)}%`;
 
   return (
     <div className="resizable-box" ref={containerRef}>
@@ -20,15 +20,13 @@ export default function ResizableBox({ children }: ResizableBoxProps) {
         <React.Fragment key={idx}>
           <div style={{ width: tostr(widths[idx]) }}>{box}</div>
 
-          {idx !== children.length - 1 ? (
+          {idx !== children.length - 1 && (
             <ResizeBar
               containerRef={containerRef}
               widthChange={(widths) => setWidths(widths)}
               idx={idx + 1}
               widths={widths}
             />
-          ) : (
-            ""
           )}
         </React.Fragment>
       ))}

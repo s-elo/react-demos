@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
-import { SetActivePayload } from "./type";
+import { SetActivePayload, DefaultPannel } from "./type";
 
 const defaultPannelWidth = 294;
 const defaultPannelHeight = 404;
@@ -12,6 +12,21 @@ const defaultPannel: { isActive: boolean }[][] = new Array(
   })
 );
 
+// const initPosMap = {
+// L: [
+//   { row: 0, col: 0 },
+//   { row: 1, col: 0 },
+//   { row: 2, col: 0 },
+//   { row: 2, col: 1 },
+// ]
+// };
+
+// const getActivePos = {
+//   L: ({row, col}: StartPos) => {
+//     if (row < -3) return
+//   },
+// };
+
 const pannelSlice = createSlice({
   name: "pannel",
   initialState: {
@@ -20,12 +35,14 @@ const pannelSlice = createSlice({
     maxRow: ~~(defaultPannelHeight / 22) - 1,
     maxCol: ~~(defaultPannelWidth / 22) - 1,
     pannel: defaultPannel,
+    curShape: "BLANK",
     dropBlocks: [
       { row: 0, col: 0 },
       { row: 1, col: 0 },
       { row: 2, col: 0 },
+      { row: 2, col: 1 },
     ],
-  },
+  } as DefaultPannel,
   reducers: {
     setActive(state, action: PayloadAction<SetActivePayload>) {
       const activePos = action.payload;
@@ -64,3 +81,11 @@ export default pannelSlice.reducer;
 export const { setActive, setDisactive, setDropBlocks } = pannelSlice.actions;
 
 export const selectPannel = (state: RootState) => state.pannel;
+export const selectCurBlock = (state: RootState) => ({
+  curBlockPos: state.pannel.dropBlocks,
+  curBlockShape: state.pannel.curShape,
+});
+export const selectBoundary = (state: RootState) => ({
+  maxRow: state.pannel.maxRow,
+  maxCol: state.pannel.maxCol,
+});

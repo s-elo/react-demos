@@ -1,15 +1,11 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { selectPannel } from "../pannelSlice";
 import "./GamePannel.less";
 
-const pannelWidth = 294;
-const pannelHeight = 404;
-
-const pannel: { isBlock: boolean }[][] = new Array(~~(pannelHeight / 22)).fill(
-  new Array(~~(pannelWidth / 22)).fill({
-    isBlock: false,
-  })
-);
 export default function GamePannel() {
+  const { pannel, pannelHeight, pannelWidth } = useSelector(selectPannel);
+
   return (
     <div
       className="game-container"
@@ -17,9 +13,9 @@ export default function GamePannel() {
     >
       {pannel.map((row, idx) => (
         <p className="row" key={idx}>
-          {row.map(({ isBlock }, idx) => (
+          {row.map(({ isActive }, idx) => (
             <b
-              className={`block ${isBlock ? "active-block" : ""}`}
+              className={`block ${isActive ? "active-block" : ""}`}
               key={idx}
             ></b>
           ))}

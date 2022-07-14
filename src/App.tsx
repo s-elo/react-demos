@@ -8,6 +8,7 @@ import ReduxDemo from "./demos/05-redux/ReduxDemo";
 import ReactRedux from "./demos/06-react-redux/ReactRedux";
 import RefDemo from "./demos/07-refs";
 import ReduxToolkit from "./demos/08-redux-toolkit/ReduxToolkit";
+import Tetris from "./demos/09-tetris";
 import Others from "./demos/others/others";
 
 import "./App.less";
@@ -61,6 +62,11 @@ const demos = [
     path: "/reduxToolkit",
     name: "ReduxToolkit",
     component: ReduxToolkit,
+  },
+  {
+    path: "/tetris",
+    name: "Tetris",
+    component: Tetris,
   },
   {
     path: "/others",

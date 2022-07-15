@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   selectCurBlock,
@@ -8,55 +8,77 @@ import {
 } from "./pannelSlice";
 import { BlockStates, Operations, StartPos } from "./type";
 
-export const useControlBlock = () => {
+export const useController = () => {
   const { curDropPos, curDropState, curStartPos } = useSelector(selectCurBlock);
   const { maxRow, maxCol } = useSelector(selectBoundary);
 
+  const initBlock = useGenerateBlock();
   const getActivePos = useGetActivePos();
   const checkBoundary = useCheckBoundary();
 
   const dispatch = useDispatch();
 
-  return useCallback(
-    (operation: Operations) => {
-      if (!checkBoundary(operation)) return "STOPPED";
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const downFnRef = useRef<(() => "STOPPED" | "DROPPING") | null>(null);
 
-      switch (operation) {
-        case "DOWN":
-          const startCol = Math.floor(maxCol / 2) - 1;
-          const nextStartPos =
-            curDropPos.length === 0 // not shown yet
-              ? { row: -2, col: startCol }
-              : {
-                  row: curStartPos.row + 1,
-                  col: curStartPos.col,
-                };
+  return useMemo(() => {
+    const controller = {
+      start() {
+        console.log("start");
+        if (timerRef.current != null) return;
 
-          dispatch(
-            setDropBlocks({
-              startPos: nextStartPos,
-              activePos: getActivePos(nextStartPos, curDropState),
-            })
-          );
-          break;
+        initBlock();
 
-        default:
-          break;
-      }
+        timerRef.current = setInterval(() => {
+          if (!downFnRef.current) return;
 
-      return "DROPPING";
-    },
-    [
-      getActivePos,
-      checkBoundary,
-      dispatch,
-      curDropPos,
-      curDropState,
-      curStartPos,
-      maxRow,
-      maxCol,
-    ]
-  );
+          const status = downFnRef.current();
+          if (status === "STOPPED") {
+            initBlock();
+          }
+        }, 500);
+      },
+      pause() {
+        if (!timerRef.current) return;
+        clearInterval(timerRef.current);
+      },
+      DOWN() {
+        if (!checkBoundary("DOWN")) return "STOPPED";
+
+        const nextStartPos =
+          curDropPos.length === 0 // not shown yet
+            ? { row: -2, col: Math.floor(maxCol / 2) - 1 }
+            : {
+                row: curStartPos.row + 1,
+                col: curStartPos.col,
+              };
+
+        dispatch(
+          setDropBlocks({
+            startPos: nextStartPos,
+            activePos: getActivePos(nextStartPos, curDropState),
+          })
+        );
+
+        return "DROPPING";
+      },
+    };
+
+    // every time changes, update the ref so that the timer can use the latest function
+    downFnRef.current = controller.DOWN;
+
+    return controller;
+  }, [
+    initBlock,
+    getActivePos,
+    checkBoundary,
+    dispatch,
+    curDropPos,
+    curDropState,
+    curStartPos,
+    maxRow,
+    maxCol,
+  ]);
 };
 
 export const useGetActivePos = () => {

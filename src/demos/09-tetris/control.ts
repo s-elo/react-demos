@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectCurBlock, setDropBlocks, selectBoundary } from "./pannelSlice";
 import { BlockStates, Operations, StartPos } from "./type";
@@ -10,58 +11,73 @@ export const useControlBlock = () => {
 
   const dispatch = useDispatch();
 
-  return (operation: Operations) => {
-    switch (operation) {
-      case "DOWN":
-        // check boundary
-        if (curDropPos.some(({ row }) => row + 1 > maxRow)) return "STOPPED";
+  return useCallback(
+    (operation: Operations) => {
+      switch (operation) {
+        case "DOWN":
+          // check boundary
+          if (curDropPos.some(({ row }) => row + 1 > maxRow)) return "STOPPED";
 
-        const startCol = Math.floor(maxCol / 2) - 1;
-        const nextStartPos =
-          curDropPos.length === 0 // not shown yet
-            ? { row: -2, col: startCol }
-            : {
-                row: curStartPos.row + 1,
-                col: curStartPos.col,
-              };
+          const startCol = Math.floor(maxCol / 2) - 1;
+          const nextStartPos =
+            curDropPos.length === 0 // not shown yet
+              ? { row: -2, col: startCol }
+              : {
+                  row: curStartPos.row + 1,
+                  col: curStartPos.col,
+                };
 
-        dispatch(
-          setDropBlocks({
-            startPos: nextStartPos,
-            activePos: getActivePos(nextStartPos, curDropState),
-          })
-        );
-        break;
+          dispatch(
+            setDropBlocks({
+              startPos: nextStartPos,
+              activePos: getActivePos(nextStartPos, curDropState),
+            })
+          );
+          break;
 
-      default:
-        break;
-    }
+        default:
+          break;
+      }
 
-    return "DROPPING";
-  };
+      return "DROPPING";
+    },
+    [
+      getActivePos,
+      dispatch,
+      curDropPos,
+      curDropState,
+      curStartPos,
+      maxRow,
+      maxCol,
+    ]
+  );
 };
 
 export const useGetActivePos = () => {
   const { maxRow, maxCol } = useSelector(selectBoundary);
 
-  return ({ row, col }: StartPos, blockState: BlockStates) => {
-    // start pos is the left top pos of a square
-    if (blockState === "LU") {
-      const pos = [
-        { row: row + 1, col: col + 2 },
-        { row: row + 2, col },
-        { row: row + 2, col: col + 1 },
-        { row: row + 2, col: col + 2 },
-      ];
+  return useCallback(
+    ({ row, col }: StartPos, blockState: BlockStates) => {
+      // start pos is the left top pos of a square
+      if (blockState === "LU") {
+        const pos = [
+          { row: row + 1, col: col + 2 },
+          { row: row + 2, col },
+          { row: row + 2, col: col + 1 },
+          { row: row + 2, col: col + 2 },
+        ];
 
-      // only show the valid part
-      return pos.filter(
-        ({ row, col }) => row >= 0 && row <= maxRow && col >= 0 && col <= maxCol
-      );
-    }
+        // only show the valid part
+        return pos.filter(
+          ({ row, col }) =>
+            row >= 0 && row <= maxRow && col >= 0 && col <= maxCol
+        );
+      }
 
-    return [];
-  };
+      return [];
+    },
+    [maxRow, maxCol]
+  );
 };
 
 export const useGenerateBlock = () => {
@@ -71,7 +87,7 @@ export const useGenerateBlock = () => {
 
   const dispatch = useDispatch();
 
-  return () => {
+  return useCallback(() => {
     const nextStartPos = { row: -2, col: Math.floor(maxCol / 2) - 1 };
     const dropState = "LU";
 
@@ -83,5 +99,5 @@ export const useGenerateBlock = () => {
         clearPrev: false, // preserve previous blocks
       })
     );
-  };
+  }, [maxCol, getActivePos, dispatch]);
 };

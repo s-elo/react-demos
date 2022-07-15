@@ -13,7 +13,7 @@ export default function GamePannel() {
   useEffect(() => {
     initBlock(); // should use a button event to start
     // eslint-disable-next-line
-  }, []);
+  }, [initBlock]);
 
   useEffect(() => {
     const timer = setInterval(() => {

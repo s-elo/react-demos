@@ -1,23 +1,33 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectPannel } from "../pannelSlice";
-import { useControlBlock } from "../control";
+import { useControlBlock, useGenerateBlock } from "../control";
 import "./GamePannel.less";
 
 export default function GamePannel() {
   const { pannel, pannelHeight, pannelWidth } = useSelector(selectPannel);
 
   const controler = useControlBlock();
+  const initBlock = useGenerateBlock();
+
+  useEffect(() => {
+    initBlock(); // should use a button event to start
+    // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      controler("DOWN");
+      const status = controler("DOWN");
+      // generate a new dropping block
+      if (status === "STOPPED") {
+        initBlock();
+      }
     }, 500);
 
     return () => {
       clearInterval(timer);
     };
-  }, [controler]);
+  }, [controler, initBlock]);
 
   return (
     <div

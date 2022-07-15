@@ -1,3 +1,12 @@
+export type BlockShapes =
+  | "L"
+  | "J"
+  | "T"
+  | "S"
+  | "Z"
+  | "SQUARE"
+  | "STICK"
+  | "BLANK";
 export type DefaultPannel = {
   pannelWidth: number;
   pannelHeight: number;
@@ -6,8 +15,9 @@ export type DefaultPannel = {
   pannel: {
     isActive: boolean;
   }[][];
-  curShape: "L" | "J" | "T" | "S" | "Z" | "SQUARE" | "STICK" | "BLANK";
-  dropBlocks: {
+  curDropState: BlockStates;
+  curStartPos: StartPos;
+  curDropPos: {
     row: number;
     col: number;
   }[];
@@ -16,7 +26,15 @@ export type SetActivePayload = {
   row: number;
   col: number;
 }[];
+export type SetDropBlock = {
+  startPos: StartPos;
+  activePos: SetActivePayload;
+  dropState?: BlockStates;
+  clearPrev?: boolean;
+};
 
 export type Operations = "LEFT" | "RIGHT" | "DOWN" | "ROTATE";
 
 export type StartPos = { row: number; col: number };
+
+export type BlockStates = "LU" | "LD" | "LL" | "LR" | "BLANK";

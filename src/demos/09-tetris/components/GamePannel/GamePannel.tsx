@@ -1,17 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { selectPannel } from "../../pannelSlice";
-import { useController } from "../../control";
 import "./GamePannel.less";
 
 export default function GamePannel() {
   const { pannel, pannelHeight, pannelWidth } = useSelector(selectPannel);
-
-  const controler = useController();
-
-  useEffect(() => {
-    controler.start(); // should use a button event to start
-  }, []);
 
   return (
     <div

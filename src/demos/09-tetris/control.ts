@@ -24,10 +24,10 @@ export const useController = () => {
   return useMemo(() => {
     const controller = {
       start() {
-        console.log("start");
         if (timerRef.current != null) return;
 
-        initBlock();
+        // when no block dropping, generate one
+        curDropPos.length === 0 && initBlock();
 
         timerRef.current = setInterval(() => {
           if (!downFnRef.current) return;
@@ -41,6 +41,7 @@ export const useController = () => {
       pause() {
         if (!timerRef.current) return;
         clearInterval(timerRef.current);
+        timerRef.current = null;
       },
       DOWN() {
         if (!checkBoundary("DOWN")) return "STOPPED";

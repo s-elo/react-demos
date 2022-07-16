@@ -13,6 +13,15 @@ export default function ControlPannel() {
       <button className="pause-btn" onClick={controller.pause}>
         pause
       </button>
+      <button className="left-btn" onClick={() => controller.move("LEFT")}>
+        left
+      </button>
+      <button className="right-btn" onClick={() => controller.move("RIGHT")}>
+        right
+      </button>
+      <button className="down-btn" onClick={() => controller.move("DOWN")}>
+        down
+      </button>
     </div>
   );
 }

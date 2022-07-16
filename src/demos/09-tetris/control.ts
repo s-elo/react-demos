@@ -10,7 +10,7 @@ import { BlockStates, Operations, StartPos } from "./type";
 
 export const useController = () => {
   const { curDropPos, curDropState, curStartPos } = useSelector(selectCurBlock);
-  const { maxRow, maxCol } = useSelector(selectBoundary);
+  const { maxCol } = useSelector(selectBoundary);
 
   const initBlock = useGenerateBlock();
   const getActivePos = useGetActivePos();
@@ -19,7 +19,9 @@ export const useController = () => {
   const dispatch = useDispatch();
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const downFnRef = useRef<(() => "STOPPED" | "DROPPING") | null>(null);
+  const moveFnRef = useRef<
+    ((operation: Operations) => "STOPPED" | "DROPPING") | null
+  >(null);
 
   return useMemo(() => {
     const controller = {
@@ -30,9 +32,9 @@ export const useController = () => {
         curDropPos.length === 0 && initBlock();
 
         timerRef.current = setInterval(() => {
-          if (!downFnRef.current) return;
+          if (!moveFnRef.current) return;
 
-          const status = downFnRef.current();
+          const status = moveFnRef.current("DOWN");
           if (status === "STOPPED") {
             initBlock();
           }
@@ -43,16 +45,38 @@ export const useController = () => {
         clearInterval(timerRef.current);
         timerRef.current = null;
       },
-      DOWN() {
-        if (!checkBoundary("DOWN")) return "STOPPED";
+      move(operation: Operations) {
+        if (!checkBoundary(operation)) return "STOPPED";
 
-        const nextStartPos =
-          curDropPos.length === 0 // not shown yet
-            ? { row: -2, col: Math.floor(maxCol / 2) - 1 }
-            : {
+        let nextStartPos: StartPos;
+        if (curDropPos.length === 0) {
+          // not shown yet
+          nextStartPos = { row: -2, col: Math.floor(maxCol / 2) - 1 };
+        } else {
+          switch (operation) {
+            case "DOWN":
+              nextStartPos = {
                 row: curStartPos.row + 1,
                 col: curStartPos.col,
               };
+              break;
+            case "LEFT":
+              nextStartPos = {
+                row: curStartPos.row,
+                col: curStartPos.col - 1,
+              };
+              break;
+            case "RIGHT":
+              nextStartPos = {
+                row: curStartPos.row,
+                col: curStartPos.col + 1,
+              };
+              break;
+            default:
+              nextStartPos = { row: -2, col: Math.floor(maxCol / 2) - 1 };
+              break;
+          }
+        }
 
         dispatch(
           setDropBlocks({
@@ -66,7 +90,7 @@ export const useController = () => {
     };
 
     // every time changes, update the ref so that the timer can use the latest function
-    downFnRef.current = controller.DOWN;
+    moveFnRef.current = controller.move;
 
     return controller;
   }, [
@@ -77,7 +101,7 @@ export const useController = () => {
     curDropPos,
     curDropState,
     curStartPos,
-    maxRow,
+    // maxRow,
     maxCol,
   ]);
 };
@@ -157,6 +181,36 @@ export const useCheckBoundary = () => {
               !curDropPos.some(
                 // and next pos is not included in curDropPos
                 ({ row: row_, col: col_ }) => row_ === row + 1 && col_ === col
+              ))
+        )
+      ) {
+        return false;
+      }
+
+      if (
+        operation === "LEFT" &&
+        curDropPos.some(
+          ({ row, col }) =>
+            col - 1 < 0 || // less than minimum value
+            (pannel[row][col - 1].isActive && // next pos is active
+              !curDropPos.some(
+                // and next pos is not included in curDropPos
+                ({ row: row_, col: col_ }) => row_ === row && col_ === col - 1
+              ))
+        )
+      ) {
+        return false;
+      }
+
+      if (
+        operation === "RIGHT" &&
+        curDropPos.some(
+          ({ row, col }) =>
+            col + 1 > maxCol || // bigger than maximum value
+            (pannel[row][col + 1].isActive && // next pos is active
+              !curDropPos.some(
+                // and next pos is not included in curDropPos
+                ({ row: row_, col: col_ }) => row_ === row && col_ === col + 1
               ))
         )
       ) {

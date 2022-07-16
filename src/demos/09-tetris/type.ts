@@ -1,12 +1,4 @@
-export type BlockShapes =
-  | "L"
-  | "J"
-  | "T"
-  | "S"
-  | "Z"
-  | "SQUARE"
-  | "STICK"
-  | "BLANK";
+export type BlockShapes = "L" | "J" | "T" | "S" | "Z" | "O" | "I" | "B";
 export type DefaultPannel = {
   pannelWidth: number;
   pannelHeight: number;
@@ -38,3 +30,4 @@ export type Operations = "LEFT" | "RIGHT" | "DOWN" | "ROTATE";
 export type StartPos = { row: number; col: number };
 
 export type BlockStates = "LU" | "LD" | "LL" | "LR" | "BLANK";
+export type RotateStates = "U" | "D" | "L" | "R";

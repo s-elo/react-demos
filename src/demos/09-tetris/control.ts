@@ -5,6 +5,7 @@ import {
   setDropBlocks,
   selectBoundary,
   selectPannel,
+  rotateFsm,
 } from "./pannelSlice";
 import { BlockStates, Operations, StartPos } from "./type";
 
@@ -72,6 +73,12 @@ export const useController = () => {
                 col: curStartPos.col + 1,
               };
               break;
+            case "ROTATE":
+              nextStartPos = {
+                row: curStartPos.row,
+                col: curStartPos.col,
+              };
+              break;
             default:
               nextStartPos = { row: -2, col: Math.floor(maxCol / 2) - 1 };
               break;
@@ -81,7 +88,12 @@ export const useController = () => {
         dispatch(
           setDropBlocks({
             startPos: nextStartPos,
-            activePos: getActivePos(nextStartPos, curDropState),
+            activePos: getActivePos(
+              nextStartPos,
+              operation === "ROTATE" ? rotateFsm(curDropState) : curDropState
+            ),
+            dropState:
+              operation === "ROTATE" ? rotateFsm(curDropState) : curDropState,
           })
         );
 
@@ -101,7 +113,6 @@ export const useController = () => {
     curDropPos,
     curDropState,
     curStartPos,
-    // maxRow,
     maxCol,
   ]);
 };
@@ -121,18 +132,28 @@ export const useGetActivePos = () => {
           { row: row + 2, col: col + 1 },
           { row: row + 2, col: col + 2 },
         ];
-      }
-
-      if (blockState === "LD") {
+      } else if (blockState === "LD") {
         pos = [
           { row: row + 1, col: col },
           { row: row + 1, col: col + 1 },
           { row: row + 1, col: col + 2 },
           { row: row + 2, col },
         ];
-      }
-
-      if (blockState === "BLANK") pos = [];
+      } else if (blockState === "LL") {
+        pos = [
+          { row: row, col: col },
+          { row: row, col: col + 1 },
+          { row: row + 1, col: col + 1 },
+          { row: row + 2, col: col + 1 },
+        ];
+      } else if (blockState === "LR") {
+        pos = [
+          { row: row, col: col + 1 },
+          { row: row + 1, col: col + 1 },
+          { row: row + 2, col: col + 1 },
+          { row: row + 2, col: col + 2 },
+        ];
+      } else if (blockState === "BLANK") pos = [];
 
       // only show the valid part
       return pos.filter(
@@ -168,7 +189,10 @@ export const useGenerateBlock = () => {
 };
 
 export const useCheckBoundary = () => {
-  const { pannel, maxRow, maxCol, curDropPos } = useSelector(selectPannel);
+  const { pannel, maxRow, maxCol, curDropPos, curStartPos, curDropState } =
+    useSelector(selectPannel);
+
+  const getActivePos = useGetActivePos();
 
   return useCallback(
     (operation: Operations) => {
@@ -217,8 +241,33 @@ export const useCheckBoundary = () => {
         return false;
       }
 
+      if (operation === "ROTATE") {
+        const rotatedPos = getActivePos(curStartPos, rotateFsm(curDropState));
+
+        if (
+          rotatedPos.some(
+            ({ row, col }) =>
+              !(row >= 0 && row <= maxRow && col >= 0 && col <= maxCol) || // outside boundary
+              (pannel[row][col].isActive && // rotated pos is active
+                !curDropPos.some(
+                  // and rotated pos is not included in curDropPos
+                  ({ row: row_, col: col_ }) => row_ === row && col_ === col
+                ))
+          )
+        )
+          return false;
+      }
+
       return true;
     },
-    [pannel, maxRow, maxCol, curDropPos]
+    [
+      pannel,
+      maxRow,
+      maxCol,
+      curDropPos,
+      curStartPos,
+      curDropState,
+      getActivePos,
+    ]
   );
 };

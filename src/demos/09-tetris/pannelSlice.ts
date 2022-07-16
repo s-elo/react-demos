@@ -1,6 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
-import { SetActivePayload, SetDropBlock, DefaultPannel } from "./type";
+import {
+  SetActivePayload,
+  SetDropBlock,
+  DefaultPannel,
+  BlockStates,
+  BlockShapes,
+  RotateStates,
+} from "./type";
 
 const defaultPannelWidth = 294;
 const defaultPannelHeight = 404;
@@ -12,14 +19,19 @@ const defaultPannel: { isActive: boolean }[][] = new Array(
   })
 );
 
-// const initPosMap = {
-// L: [
-//   { row: 0, col: 0 },
-//   { row: 1, col: 0 },
-//   { row: 2, col: 0 },
-//   { row: 2, col: 1 },
-// ]
-// };
+export const rotateFsm = (blockState: BlockStates) => {
+  const blockShape = blockState[0] as BlockShapes;
+  const rotateState = blockState[1] as RotateStates;
+
+  if (blockShape === "L") {
+    if (rotateState === "U") return "LL";
+    if (rotateState === "D") return "LR";
+    if (rotateState === "L") return "LD";
+    if (rotateState === "R") return "LU";
+  }
+
+  return "LU";
+};
 
 const pannelSlice = createSlice({
   name: "pannel",

@@ -22,6 +22,9 @@ export default function ControlPannel() {
       <button className="down-btn" onClick={() => controller.move("DOWN")}>
         down
       </button>
+      <button className="rotate-btn" onClick={() => controller.move("ROTATE")}>
+        rotate
+      </button>
     </div>
   );
 }

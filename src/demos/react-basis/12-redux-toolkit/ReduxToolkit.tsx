@@ -19,7 +19,7 @@ import store from "./store";
 import { worker } from "./api/server";
 import "./reduxToolkit.less";
 
-const demoPath = "/reduxToolkit";
+const demoPath = "/react-basis/reduxToolkit";
 
 async function start() {
   // Start our mock API server

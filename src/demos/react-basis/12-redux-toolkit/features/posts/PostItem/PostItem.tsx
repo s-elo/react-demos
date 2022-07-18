@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 // import { useSelector } from "react-redux";
 import PostAuthor from "../PostAuthor/PostAuthor";
-import TimeAge from "@/demos/08-redux-toolkit/components/TimeAgo/TimeAge";
+import TimeAge from "@/demos/react-basis/12-redux-toolkit/components/TimeAgo/TimeAge";
 import PostReactBtn from "../PostReactBtn/PostReactBtn";
 import { PostData } from "../post";
 // import { selectPostById } from "../postSlice";

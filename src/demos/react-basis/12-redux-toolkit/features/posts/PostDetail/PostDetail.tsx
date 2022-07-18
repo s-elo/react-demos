@@ -2,7 +2,7 @@ import React from "react";
 // import { useSelector } from "react-redux";
 import { Link, RouteComponentProps } from "react-router-dom";
 import PostAuthor from "../PostAuthor/PostAuthor";
-import TimeAge from "@/demos/08-redux-toolkit/components/TimeAgo/TimeAge";
+import TimeAge from "@/demos/react-basis/12-redux-toolkit/components/TimeAgo/TimeAge";
 import Spinner from "@/component/Spinner/Spinner";
 import PostReactBtn from "../PostReactBtn/PostReactBtn";
 // import { selectPostById } from "../postSlice";
@@ -48,8 +48,7 @@ export default function PostDetail(
         </Link>
       </article>
     );
-  } 
-  else if (isError) {
+  } else if (isError) {
     return <div>{`error, cannot find this id`}</div>;
   }
 

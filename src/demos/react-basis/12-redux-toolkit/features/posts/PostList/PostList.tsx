@@ -2,7 +2,7 @@ import { useMemo, useEffect, ReactNode } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import PostItem from "../PostItem/PostItem";
 // import { selectPostIds, fetchPosts } from "../postSlice";
-import { RootState } from "@/demos/08-redux-toolkit/store";
+import { RootState } from "@/demos/react-basis/12-redux-toolkit/store";
 import Spinner from "@/component/Spinner/Spinner";
 import { fetchUsers } from "../../users/userSlice";
 import { useGetPostsQuery } from "../../api/apiSlice";

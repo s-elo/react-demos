@@ -6,11 +6,15 @@ import {
   selectBoundary,
   selectPannel,
   rotateFsm,
+  selectGameState,
+  cancelBlocks,
+  downBlocksAfterCancellation,
 } from "./pannelSlice";
 import { BlockStates, Operations, StartPos } from "./type";
 
 export const useController = () => {
   const { curDropPos, curDropState, curStartPos } = useSelector(selectCurBlock);
+  const gameState = useSelector(selectGameState);
   const { maxCol } = useSelector(selectBoundary);
 
   const initBlock = useGenerateBlock();
@@ -23,6 +27,7 @@ export const useController = () => {
   const moveFnRef = useRef<
     ((operation: Operations) => "STOPPED" | "DROPPING") | null
   >(null);
+  const initBlockFnRef = useRef<(() => void) | null>(null);
 
   return useMemo(() => {
     const controller = {
@@ -35,9 +40,15 @@ export const useController = () => {
         timerRef.current = setInterval(() => {
           if (!moveFnRef.current) return;
 
+          if (gameState === "CANCELLING" || gameState === "CANCELLED") {
+            initBlockFnRef.current && initBlockFnRef.current();
+            return;
+          }
+
           const status = moveFnRef.current("DOWN");
+
           if (status === "STOPPED") {
-            initBlock();
+            initBlockFnRef.current && initBlockFnRef.current();
           }
         }, 500);
       },
@@ -103,6 +114,7 @@ export const useController = () => {
 
     // every time changes, update the ref so that the timer can use the latest function
     moveFnRef.current = controller.move;
+    initBlockFnRef.current = initBlock;
 
     return controller;
   }, [
@@ -114,6 +126,7 @@ export const useController = () => {
     curDropState,
     curStartPos,
     maxCol,
+    gameState,
   ]);
 };
 
@@ -165,12 +178,30 @@ export const useGetActivePos = () => {
 };
 
 export const useGenerateBlock = () => {
-  const { maxCol } = useSelector(selectBoundary);
+  const { pannel, gameState, maxCol } = useSelector(selectPannel);
 
   const getActivePos = useGetActivePos();
 
   const dispatch = useDispatch();
+
   return useCallback(() => {
+    // down after cancellation
+    if (gameState === "CANCELLING") {
+      dispatch(downBlocksAfterCancellation());
+      return;
+    }
+
+    // check if there is any row can be cancelled
+    const cancellRows = pannel.reduce((cancelledRows, row, idx) => {
+      row.every((block) => block.isActive === true) && cancelledRows.push(idx);
+      return cancelledRows;
+    }, [] as number[]);
+
+    if (cancellRows.length) {
+      dispatch(cancelBlocks(cancellRows));
+      return;
+    }
+
     const dropStates: BlockStates[] = ["LU", "LD"];
     // randomly generate
     const dropState =
@@ -185,7 +216,7 @@ export const useGenerateBlock = () => {
         clearPrev: false, // preserve previous blocks
       })
     );
-  }, [maxCol, getActivePos, dispatch]);
+  }, [maxCol, getActivePos, gameState, pannel, dispatch]);
 };
 
 export const useCheckBoundary = () => {

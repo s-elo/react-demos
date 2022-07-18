@@ -7,6 +7,7 @@ import {
   BlockStates,
   BlockShapes,
   RotateStates,
+  GameStates,
 } from "./type";
 
 const defaultPannelWidth = 294;
@@ -44,6 +45,8 @@ const pannelSlice = createSlice({
     curDropState: "BLANK",
     curStartPos: { row: 0, col: 0 },
     curDropPos: [],
+    gameState: "DROPPING",
+    topCancelledRow: 0,
   } as DefaultPannel,
   reducers: {
     setActive(state, action: PayloadAction<SetActivePayload>) {
@@ -60,6 +63,42 @@ const pannelSlice = createSlice({
       activePos.forEach(({ row, col }) => {
         state.pannel[row][col].isActive = false;
       });
+    },
+
+    setGameState(state, action: PayloadAction<GameStates>) {
+      const gameState = action.payload;
+      state.gameState = gameState;
+    },
+
+    cancelBlocks(state, action: PayloadAction<number[]>) {
+      const cancelRows = action.payload;
+
+      cancelRows.forEach((row) =>
+        state.pannel[row].forEach((block) => (block.isActive = false))
+      );
+
+      state.gameState = "CANCELLING";
+      state.topCancelledRow = cancelRows[0];
+    },
+
+    downBlocksAfterCancellation(state) {
+      // down after cancellation
+      for (let row = state.topCancelledRow - 1; row >= 0; row--) {
+        state.pannel[row].forEach((block, col) => {
+          if (!block.isActive) return;
+
+          // find the lowest postition
+          for (let r = row; r <= state.maxRow; r++) {
+            if (r === state.maxRow || state.pannel[r + 1][col].isActive) {
+              state.pannel[row][col].isActive = false;
+              state.pannel[r][col].isActive = true;
+              return;
+            }
+          }
+        });
+      }
+
+      state.gameState = "CANCELLED";
     },
 
     setDropBlocks(state, action: PayloadAction<SetDropBlock>) {
@@ -83,6 +122,7 @@ const pannelSlice = createSlice({
 
       state.curDropPos = activePos;
       state.curStartPos = startPos;
+      state.gameState = "DROPPING";
 
       dropState && (state.curDropState = dropState);
     },
@@ -90,9 +130,18 @@ const pannelSlice = createSlice({
 });
 
 export default pannelSlice.reducer;
-export const { setActive, setDisactive, setDropBlocks } = pannelSlice.actions;
+export const {
+  setActive,
+  setDisactive,
+  setDropBlocks,
+  setGameState,
+  cancelBlocks,
+  downBlocksAfterCancellation,
+} = pannelSlice.actions;
 
+export const selectGameState = (state: RootState) => state.pannel.gameState;
 export const selectPannel = (state: RootState) => state.pannel;
+export const selectPannelPos = (state: RootState) => state.pannel.pannel;
 export const selectCurBlock = (state: RootState) => ({
   curDropPos: state.pannel.curDropPos,
   curStartPos: state.pannel.curStartPos,

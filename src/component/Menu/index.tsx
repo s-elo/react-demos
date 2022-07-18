@@ -10,123 +10,89 @@ import {
 import Ops from "@/component/Ops";
 
 import "./index.less";
-
-type Item = {
-  path: string;
-  name: string;
-  component: React.ComponentType;
-};
+import { Demo } from "@/menuconfig";
 
 type Props = {
-  items: Array<Item>;
+  items: Array<Demo>;
   linkStyle: {
     [Props: string]: string;
   };
   menuPath: string;
-  // sync the demo name
-  itemChanged?: (itemName: string) => void;
 };
 
 class Menu extends React.Component<RouteComponentProps & Props> {
-  state = {
-    isFirstTime: true,
-  };
-
-  handleShowItem(itemName: string) {
-    this.props.itemChanged && this.props.itemChanged(itemName);
-  }
-
   toMenu() {
     const { history, menuPath } = this.props;
 
     history.push(menuPath);
-
-    this.props.itemChanged && this.props.itemChanged("");
   }
-
-  componentDidMount() {
-    const {
-      location: { pathname },
-      history,
-      items,
-    } = this.props;
-
-    // only jump if the pathname is included in the path of one of the items in this menu (level)
-    // or the pathname is the next level of the path of one of the items
-    const isIncluded = items.some(
-      (v) => v.path === pathname || pathname.indexOf(v.path) !== -1
-    );
-
-    if (isIncluded && this.state.isFirstTime) {
-      history.push(pathname);
-
-      // sync the name if it has a name and being the up level the the pathname
-      if (
-        this.props.itemChanged &&
-        items.some((v) => pathname.indexOf(v.path) !== -1)
-      ) {
-        // find that up level
-        const item = items.find((v) => pathname.indexOf(v.path) !== -1);
-
-        item && this.props.itemChanged(item.name);
-      }
-
-      this.setState({
-        isFirstTime: false,
-      });
-    }
-  }
-
-  isMenuPath = (menuPath: string) => {
-    // when it is a root path,
-    // show the menu instead of the items
-    return (
-      this.props.location.pathname === menuPath ||
-      this.props.location.pathname === "/react-demos"
-    );
-  };
 
   render() {
-    const { items, linkStyle, menuPath } = this.props;
+    const { items, linkStyle } = this.props;
+    const menuPath = this.props.menuPath === "/" ? "" : this.props.menuPath;
 
     return (
       <div className="body">
-        {this.isMenuPath(menuPath) ? (
-          <div className="menu">
-            {items.map((item, index) => (
-              <div
-                className="menu-item"
-                key={item.path}
-                onClick={this.handleShowItem.bind(this, item.name)}
+        <Switch>
+          <Route path={`${this.props.menuPath}`} exact>
+            <div className="menu">
+              {items.map((item, index) => (
+                <div className="menu-item" key={`${menuPath}${item.path}`}>
+                  <div className="menu-order">{index + 1}</div>
+                  <Link style={linkStyle} to={`${menuPath}${item.path}`}>
+                    {item.name}
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </Route>
+          {items.map((item) =>
+            !Array.isArray(item.component) ? (
+              <Route
+                path={`${menuPath}${item.path}`}
+                key={`${menuPath}${item.path}`}
               >
-                <div className="menu-order">{index + 1}</div>
-                <Link style={linkStyle} to={item.path}>
-                  {item.name}
-                </Link>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="demo-area">
-            <div className="demo-content">
-              <Switch>
-                {items.map((item) => (
-                  <Route
-                    path={item.path}
-                    component={item.component}
-                    key={item.path}
-                  />
-                ))}
-                <Route path="/ops" component={Ops} />
-                {/* when the above does not match */}
-                <Redirect to="/ops" />
-              </Switch>
-            </div>
-            <div className="back-to-menu" onClick={this.toMenu.bind(this)}>
-              Menu
-            </div>
-          </div>
-        )}
+                <div className="demo-area">
+                  <div className="demo-content">
+                    {React.createElement(item.component)}
+                  </div>
+                  <div
+                    className="back-to-menu"
+                    onClick={this.toMenu.bind(this)}
+                    title="back to menu"
+                  >
+                    ⬅
+                  </div>
+                </div>
+              </Route>
+            ) : (
+              <Route
+                key={`${menuPath}${item.path}`}
+                path={`${menuPath}${item.path}`}
+              >
+                <div className="demo-area">
+                  <div className="demo-content">
+                    {React.createElement(withRouter(Menu), {
+                      items: item.component,
+                      linkStyle,
+                      menuPath: `${menuPath}${item.path}`,
+                    })}
+                  </div>
+                  <div
+                    className="back-to-menu"
+                    onClick={this.toMenu.bind(this)}
+                    title="back to menu"
+                  >
+                    ⬅
+                  </div>
+                </div>
+              </Route>
+            )
+          )}
+          <Route path="/ops" component={Ops} exact />
+          {/* when the above does not match */}
+          <Redirect to="/ops" />
+        </Switch>
       </div>
     );
   }

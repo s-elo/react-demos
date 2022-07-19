@@ -7,6 +7,7 @@ export type DefaultPannel = {
   maxCol: number;
   pannel: {
     isActive: boolean;
+    isCancelling: boolean;
   }[][];
   curDropState: BlockStates;
   curStartPos: StartPos;

@@ -11,7 +11,7 @@ import {
   setGameState,
 } from "./pannelSlice";
 import { getActivePos, rotateFsm } from "./utils";
-import { BlockStates, Operations, StartPos } from "./type";
+import { BlockStates, GameStates, Operations, StartPos } from "./type";
 
 export const useController = () => {
   const { curDropPos, curDropState, curStartPos } = useSelector(selectCurBlock);
@@ -28,10 +28,12 @@ export const useController = () => {
     ((operation: Operations) => "STOPPED" | "DROPPING") | null
   >(null);
   const initBlockFnRef = useRef<(() => void) | null>(null);
+  const gameStateRef = useRef<GameStates>("DROPPING");
 
   return useMemo(() => {
     const controller = {
       start() {
+        dispatch(setGameState("DROPPING"));
         if (timerRef.current != null) return;
 
         // when no block dropping, generate one
@@ -39,16 +41,18 @@ export const useController = () => {
 
         timerRef.current = setInterval(() => {
           if (!moveFnRef.current) return;
-          if (gameState === "PAUSING") return;
 
-          if (gameState === "CANCELLING" || gameState === "CANCELLED") {
+          if (
+            gameStateRef.current === "CANCELLING" ||
+            gameStateRef.current === "CANCELLED"
+          ) {
             initBlockFnRef.current && initBlockFnRef.current();
             return;
           }
 
           const status = moveFnRef.current("DOWN");
 
-          if (status === "STOPPED" && gameState === "DROPPING") {
+          if (status === "STOPPED" && gameStateRef.current === "DROPPING") {
             initBlockFnRef.current && initBlockFnRef.current();
           }
         }, 500);
@@ -118,6 +122,7 @@ export const useController = () => {
     // every time changes, update the ref so that the timer can use the latest function
     moveFnRef.current = controller.move;
     initBlockFnRef.current = initBlock;
+    gameStateRef.current = gameState;
 
     return controller;
   }, [

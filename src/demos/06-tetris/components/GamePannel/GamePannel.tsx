@@ -13,9 +13,11 @@ export default function GamePannel() {
     >
       {pannel.map((row, idx) => (
         <p className="row" key={idx}>
-          {row.map(({ isActive }, idx) => (
+          {row.map(({ isActive, isCancelling }, idx) => (
             <b
-              className={`block ${isActive ? "active-block" : ""}`}
+              className={`block ${isActive ? "active-block" : ""} ${
+                isCancelling && isActive === false ? "cancelled-block" : ""
+              }`}
               key={idx}
             ></b>
           ))}

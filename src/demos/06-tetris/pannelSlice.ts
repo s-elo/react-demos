@@ -9,13 +9,13 @@ import {
 
 const defaultPannelWidth = 294;
 const defaultPannelHeight = 404;
-const defaultPannel: { isActive: boolean }[][] = new Array(
-  ~~(defaultPannelHeight / 22)
-).fill(
-  new Array(~~(defaultPannelWidth / 22)).fill({
-    isActive: false,
-  })
-);
+const defaultPannel: { isActive: boolean; isCancelling: boolean }[][] =
+  new Array(~~(defaultPannelHeight / 22)).fill(
+    new Array(~~(defaultPannelWidth / 22)).fill({
+      isActive: false,
+      isCancelling: false,
+    })
+  );
 
 const pannelSlice = createSlice({
   name: "pannel",
@@ -57,7 +57,10 @@ const pannelSlice = createSlice({
       const cancelRows = action.payload;
 
       cancelRows.forEach((row) =>
-        state.pannel[row].forEach((block) => (block.isActive = false))
+        state.pannel[row].forEach((block) => {
+          block.isActive = false;
+          block.isCancelling = true;
+        })
       );
 
       state.gameState = "CANCELLING";
@@ -81,6 +84,14 @@ const pannelSlice = createSlice({
         });
       }
 
+      // set isCancelling status as false
+      for (let row = state.topCancelledRow; row <= state.maxRow; row++) {
+        state.pannel[row].forEach((block, col) => {
+          if (block.isCancelling) state.pannel[row][col].isCancelling = false;
+        });
+      }
+
+      state.topCancelledRow = 0;
       state.gameState = "CANCELLED";
     },
 

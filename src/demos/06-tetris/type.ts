@@ -33,5 +33,25 @@ export type Operations = "LEFT" | "RIGHT" | "DOWN" | "ROTATE";
 
 export type StartPos = { row: number; col: number };
 
-export type BlockStates = "LU" | "LD" | "LL" | "LR" | "BLANK";
+export type BlockStates =
+  | "LU"
+  | "LD"
+  | "LL"
+  | "LR"
+  | "JU"
+  | "JD"
+  | "JL"
+  | "JR"
+  | "TU"
+  | "TD"
+  | "TL"
+  | "TR"
+  | "SU"
+  | "SL"
+  | "ZU"
+  | "ZR"
+  | "IU"
+  | "IL"
+  | "OU"
+  | "B";
 export type RotateStates = "U" | "D" | "L" | "R";

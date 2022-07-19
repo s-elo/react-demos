@@ -25,7 +25,7 @@ const pannelSlice = createSlice({
     maxRow: ~~(defaultPannelHeight / 22) - 1,
     maxCol: ~~(defaultPannelWidth / 22) - 1,
     pannel: defaultPannel,
-    curDropState: "BLANK",
+    curDropState: "B",
     curStartPos: { row: 0, col: 0 },
     curDropPos: [],
     gameState: "DROPPING",

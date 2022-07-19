@@ -163,7 +163,15 @@ export const useGenerateBlock = () => {
       return;
     }
 
-    const dropStates: BlockStates[] = ["LU", "LD"];
+    const dropStates: BlockStates[] = [
+      "LU",
+      "JU",
+      "TU",
+      "SU",
+      "ZU",
+      "IU",
+      "OU",
+    ];
     // randomly generate
     const dropState =
       dropStates[Math.round(Math.random() * (dropStates.length - 1))];
@@ -232,7 +240,11 @@ export const useCheckBoundary = () => {
       }
 
       if (operation === "ROTATE") {
-        const rotatedPos = getActivePos(curStartPos, rotateFsm(curDropState));
+        const rotatedPos = getActivePos(
+          curStartPos,
+          rotateFsm(curDropState),
+          false
+        );
 
         if (
           rotatedPos.some(
@@ -253,50 +265,3 @@ export const useCheckBoundary = () => {
     [pannel, maxRow, maxCol, curDropPos, curStartPos, curDropState]
   );
 };
-
-// export const useGetActivePos = () => {
-//   const { maxRow, maxCol } = useSelector(selectBoundary);
-
-//   return useCallback(
-//     ({ row, col }: StartPos, blockState: BlockStates) => {
-//       // start pos is the left top pos of a square
-//       let pos: StartPos[] = [];
-
-//       if (blockState === "LU") {
-//         pos = [
-//           { row: row + 1, col: col + 2 },
-//           { row: row + 2, col },
-//           { row: row + 2, col: col + 1 },
-//           { row: row + 2, col: col + 2 },
-//         ];
-//       } else if (blockState === "LD") {
-//         pos = [
-//           { row: row + 1, col: col },
-//           { row: row + 1, col: col + 1 },
-//           { row: row + 1, col: col + 2 },
-//           { row: row + 2, col },
-//         ];
-//       } else if (blockState === "LL") {
-//         pos = [
-//           { row: row, col: col },
-//           { row: row, col: col + 1 },
-//           { row: row + 1, col: col + 1 },
-//           { row: row + 2, col: col + 1 },
-//         ];
-//       } else if (blockState === "LR") {
-//         pos = [
-//           { row: row, col: col + 1 },
-//           { row: row + 1, col: col + 1 },
-//           { row: row + 2, col: col + 1 },
-//           { row: row + 2, col: col + 2 },
-//         ];
-//       } else if (blockState === "BLANK") pos = [];
-
-//       // only show the valid part
-//       return pos.filter(
-//         ({ row, col }) => row >= 0 && row <= maxRow && col >= 0 && col <= maxCol
-//       );
-//     },
-//     [maxRow, maxCol]
-//   );
-// };

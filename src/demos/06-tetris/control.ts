@@ -5,11 +5,12 @@ import {
   setDropBlocks,
   selectBoundary,
   selectPannel,
-  rotateFsm,
   selectGameState,
   cancelBlocks,
   downBlocksAfterCancellation,
+  setGameState,
 } from "./pannelSlice";
+import { getActivePos, rotateFsm } from "./utils";
 import { BlockStates, Operations, StartPos } from "./type";
 
 export const useController = () => {
@@ -18,7 +19,6 @@ export const useController = () => {
   const { maxCol } = useSelector(selectBoundary);
 
   const initBlock = useGenerateBlock();
-  const getActivePos = useGetActivePos();
   const checkBoundary = useCheckBoundary();
 
   const dispatch = useDispatch();
@@ -39,6 +39,7 @@ export const useController = () => {
 
         timerRef.current = setInterval(() => {
           if (!moveFnRef.current) return;
+          if (gameState === "PAUSING") return;
 
           if (gameState === "CANCELLING" || gameState === "CANCELLED") {
             initBlockFnRef.current && initBlockFnRef.current();
@@ -47,7 +48,7 @@ export const useController = () => {
 
           const status = moveFnRef.current("DOWN");
 
-          if (status === "STOPPED") {
+          if (status === "STOPPED" && gameState === "DROPPING") {
             initBlockFnRef.current && initBlockFnRef.current();
           }
         }, 500);
@@ -56,8 +57,10 @@ export const useController = () => {
         if (!timerRef.current) return;
         clearInterval(timerRef.current);
         timerRef.current = null;
+        dispatch(setGameState("PAUSING"));
       },
       move(operation: Operations) {
+        if (gameState === "PAUSING") return "STOPPED";
         if (!checkBoundary(operation)) return "STOPPED";
 
         let nextStartPos: StartPos;
@@ -119,7 +122,6 @@ export const useController = () => {
     return controller;
   }, [
     initBlock,
-    getActivePos,
     checkBoundary,
     dispatch,
     curDropPos,
@@ -130,75 +132,29 @@ export const useController = () => {
   ]);
 };
 
-export const useGetActivePos = () => {
-  const { maxRow, maxCol } = useSelector(selectBoundary);
-
-  return useCallback(
-    ({ row, col }: StartPos, blockState: BlockStates) => {
-      // start pos is the left top pos of a square
-      let pos: StartPos[] = [];
-
-      if (blockState === "LU") {
-        pos = [
-          { row: row + 1, col: col + 2 },
-          { row: row + 2, col },
-          { row: row + 2, col: col + 1 },
-          { row: row + 2, col: col + 2 },
-        ];
-      } else if (blockState === "LD") {
-        pos = [
-          { row: row + 1, col: col },
-          { row: row + 1, col: col + 1 },
-          { row: row + 1, col: col + 2 },
-          { row: row + 2, col },
-        ];
-      } else if (blockState === "LL") {
-        pos = [
-          { row: row, col: col },
-          { row: row, col: col + 1 },
-          { row: row + 1, col: col + 1 },
-          { row: row + 2, col: col + 1 },
-        ];
-      } else if (blockState === "LR") {
-        pos = [
-          { row: row, col: col + 1 },
-          { row: row + 1, col: col + 1 },
-          { row: row + 2, col: col + 1 },
-          { row: row + 2, col: col + 2 },
-        ];
-      } else if (blockState === "BLANK") pos = [];
-
-      // only show the valid part
-      return pos.filter(
-        ({ row, col }) => row >= 0 && row <= maxRow && col >= 0 && col <= maxCol
-      );
-    },
-    [maxRow, maxCol]
-  );
-};
-
 export const useGenerateBlock = () => {
   const { pannel, gameState, maxCol } = useSelector(selectPannel);
-
-  const getActivePos = useGetActivePos();
 
   const dispatch = useDispatch();
 
   return useCallback(() => {
-    // down after cancellation
-    if (gameState === "CANCELLING") {
-      dispatch(downBlocksAfterCancellation());
-      return;
-    }
-
     // check if there is any row can be cancelled
     const cancellRows = pannel.reduce((cancelledRows, row, idx) => {
       row.every((block) => block.isActive === true) && cancelledRows.push(idx);
       return cancelledRows;
     }, [] as number[]);
 
-    if (cancellRows.length) {
+    if (
+      (gameState === "DROPPING" || gameState === "CANCELLED") &&
+      cancellRows.length
+    ) {
       dispatch(cancelBlocks(cancellRows));
+      return;
+    }
+
+    // down after cancellation
+    if (gameState === "CANCELLING") {
+      dispatch(downBlocksAfterCancellation());
       return;
     }
 
@@ -216,14 +172,12 @@ export const useGenerateBlock = () => {
         clearPrev: false, // preserve previous blocks
       })
     );
-  }, [maxCol, getActivePos, gameState, pannel, dispatch]);
+  }, [maxCol, gameState, pannel, dispatch]);
 };
 
 export const useCheckBoundary = () => {
   const { pannel, maxRow, maxCol, curDropPos, curStartPos, curDropState } =
     useSelector(selectPannel);
-
-  const getActivePos = useGetActivePos();
 
   return useCallback(
     (operation: Operations) => {
@@ -291,14 +245,53 @@ export const useCheckBoundary = () => {
 
       return true;
     },
-    [
-      pannel,
-      maxRow,
-      maxCol,
-      curDropPos,
-      curStartPos,
-      curDropState,
-      getActivePos,
-    ]
+    [pannel, maxRow, maxCol, curDropPos, curStartPos, curDropState]
   );
 };
+
+// export const useGetActivePos = () => {
+//   const { maxRow, maxCol } = useSelector(selectBoundary);
+
+//   return useCallback(
+//     ({ row, col }: StartPos, blockState: BlockStates) => {
+//       // start pos is the left top pos of a square
+//       let pos: StartPos[] = [];
+
+//       if (blockState === "LU") {
+//         pos = [
+//           { row: row + 1, col: col + 2 },
+//           { row: row + 2, col },
+//           { row: row + 2, col: col + 1 },
+//           { row: row + 2, col: col + 2 },
+//         ];
+//       } else if (blockState === "LD") {
+//         pos = [
+//           { row: row + 1, col: col },
+//           { row: row + 1, col: col + 1 },
+//           { row: row + 1, col: col + 2 },
+//           { row: row + 2, col },
+//         ];
+//       } else if (blockState === "LL") {
+//         pos = [
+//           { row: row, col: col },
+//           { row: row, col: col + 1 },
+//           { row: row + 1, col: col + 1 },
+//           { row: row + 2, col: col + 1 },
+//         ];
+//       } else if (blockState === "LR") {
+//         pos = [
+//           { row: row, col: col + 1 },
+//           { row: row + 1, col: col + 1 },
+//           { row: row + 2, col: col + 1 },
+//           { row: row + 2, col: col + 2 },
+//         ];
+//       } else if (blockState === "BLANK") pos = [];
+
+//       // only show the valid part
+//       return pos.filter(
+//         ({ row, col }) => row >= 0 && row <= maxRow && col >= 0 && col <= maxCol
+//       );
+//     },
+//     [maxRow, maxCol]
+//   );
+// };

@@ -4,9 +4,6 @@ import {
   SetActivePayload,
   SetDropBlock,
   DefaultPannel,
-  BlockStates,
-  BlockShapes,
-  RotateStates,
   GameStates,
 } from "./type";
 
@@ -19,20 +16,6 @@ const defaultPannel: { isActive: boolean }[][] = new Array(
     isActive: false,
   })
 );
-
-export const rotateFsm = (blockState: BlockStates) => {
-  const blockShape = blockState[0] as BlockShapes;
-  const rotateState = blockState[1] as RotateStates;
-
-  if (blockShape === "L") {
-    if (rotateState === "U") return "LL";
-    if (rotateState === "D") return "LR";
-    if (rotateState === "L") return "LD";
-    if (rotateState === "R") return "LU";
-  }
-
-  return "LU";
-};
 
 const pannelSlice = createSlice({
   name: "pannel",
@@ -120,11 +103,11 @@ const pannelSlice = createSlice({
         state.pannel[row][col].isActive = true;
       });
 
+      dropState && (state.curDropState = dropState);
+
       state.curDropPos = activePos;
       state.curStartPos = startPos;
       state.gameState = "DROPPING";
-
-      dropState && (state.curDropState = dropState);
     },
   },
 });

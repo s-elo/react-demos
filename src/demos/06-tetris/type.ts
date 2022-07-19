@@ -1,5 +1,5 @@
 export type BlockShapes = "L" | "J" | "T" | "S" | "Z" | "O" | "I" | "B";
-export type GameStates = "DROPPING" | "CANCELLING" | "CANCELLED";
+export type GameStates = "DROPPING" | "CANCELLING" | "CANCELLED" | "PAUSING";
 export type DefaultPannel = {
   pannelWidth: number;
   pannelHeight: number;

@@ -55,7 +55,7 @@ export const useController = () => {
           if (status === "STOPPED" && gameStateRef.current === "DROPPING") {
             initBlockFnRef.current && initBlockFnRef.current();
           }
-        }, 500);
+        }, 1000);
       },
       pause() {
         if (!timerRef.current) return;
@@ -64,8 +64,10 @@ export const useController = () => {
         dispatch(setGameState("PAUSING"));
       },
       move(operation: Operations) {
-        if (gameState === "PAUSING") return "STOPPED";
-        if (!checkBoundary(operation)) return "STOPPED";
+        if (gameState !== "DROPPING") return "STOPPED";
+
+        const validStep = checkBoundary(operation);
+        if (validStep === false || validStep === 0) return "STOPPED";
 
         let nextStartPos: StartPos;
         if (curDropPos.length === 0) {
@@ -76,6 +78,13 @@ export const useController = () => {
             case "DOWN":
               nextStartPos = {
                 row: curStartPos.row + 1,
+                col: curStartPos.col,
+              };
+              break;
+            case "FAST_DOWN":
+            case "DROP":
+              nextStartPos = {
+                row: curStartPos.row + (validStep as number),
                 col: curStartPos.col,
               };
               break;
@@ -258,6 +267,39 @@ export const useCheckBoundary = () => {
           )
         )
           return false;
+      }
+
+      if (operation === "FAST_DOWN" || operation === "DROP") {
+        const dropStep = 3;
+        let validStep = Infinity;
+
+        for (const { row, col } of curDropPos) {
+          let validStepPerBlock = 0;
+
+          for (
+            let i = 1;
+            i <= (operation === "FAST_DOWN" ? dropStep : maxRow - row);
+            i++
+          ) {
+            if (
+              row + i > maxRow ||
+              (pannel[row + i][col].isActive &&
+                !curDropPos.some(
+                  // and pos is not included in curDropPos
+                  ({ row: row_, col: col_ }) => row_ === row + i && col_ === col
+                ))
+            ) {
+              validStep = Math.min(validStep, validStepPerBlock);
+              break;
+            }
+
+            validStepPerBlock++;
+          }
+
+          validStep = Math.min(validStep, validStepPerBlock);
+        }
+
+        return validStep;
       }
 
       return true;

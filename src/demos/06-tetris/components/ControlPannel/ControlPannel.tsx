@@ -19,11 +19,14 @@ export default function ControlPannel() {
       <button className="right-btn" onClick={() => controller.move("RIGHT")}>
         right
       </button>
-      <button className="down-btn" onClick={() => controller.move("DOWN")}>
+      <button className="down-btn" onClick={() => controller.move("FAST_DOWN")}>
         down
       </button>
       <button className="rotate-btn" onClick={() => controller.move("ROTATE")}>
         rotate
+      </button>
+      <button className="down-btn" onClick={() => controller.move("DROP")}>
+        drop
       </button>
     </div>
   );

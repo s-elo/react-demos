@@ -29,7 +29,13 @@ export type SetDropBlock = {
   clearPrev?: boolean;
 };
 
-export type Operations = "LEFT" | "RIGHT" | "DOWN" | "ROTATE";
+export type Operations =
+  | "LEFT"
+  | "RIGHT"
+  | "DOWN"
+  | "ROTATE"
+  | "FAST_DOWN"
+  | "DROP";
 
 export type StartPos = { row: number; col: number };
 

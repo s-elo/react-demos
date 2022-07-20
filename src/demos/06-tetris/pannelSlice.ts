@@ -64,7 +64,7 @@ const pannelSlice = createSlice({
       );
 
       state.gameState = "CANCELLING";
-      state.topCancelledRow = cancelRows[0];
+      state.topCancelledRow = cancelRows[cancelRows.length - 1];
     },
 
     downBlocksAfterCancellation(state) {
@@ -102,6 +102,23 @@ const pannelSlice = createSlice({
         dropState,
         clearPrev = true,
       } = action.payload;
+
+      // make sure the boundary
+      if (
+        activePos.some(
+          ({ row, col }) =>
+            row < 0 ||
+            row > state.maxRow ||
+            col < 0 ||
+            col > state.maxCol ||
+            (state.pannel[row][col].isActive &&
+              !state.curDropPos.some(
+                // and pos is not included in curDropPos
+                ({ row: row_, col: col_ }) => row_ === row && col_ === col
+              ))
+        )
+      )
+        return;
 
       // disactivate the previous blocks if it is true
       clearPrev &&

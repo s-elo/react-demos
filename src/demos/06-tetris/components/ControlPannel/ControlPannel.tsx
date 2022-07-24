@@ -7,27 +7,40 @@ export default function ControlPannel() {
 
   return (
     <div className="control-pannel">
-      <button className="start-btn" onClick={controller.start}>
-        start
-      </button>
-      <button className="pause-btn" onClick={controller.pause}>
-        pause
-      </button>
-      <button className="left-btn" onClick={() => controller.move("LEFT")}>
-        left
-      </button>
-      <button className="right-btn" onClick={() => controller.move("RIGHT")}>
-        right
-      </button>
-      <button className="down-btn" onClick={() => controller.move("FAST_DOWN")}>
-        down
-      </button>
-      <button className="rotate-btn" onClick={() => controller.move("ROTATE")}>
-        rotate
-      </button>
-      <button className="down-btn" onClick={() => controller.move("DROP")}>
-        drop
-      </button>
+      <div className="overall-control">
+        <button className="restart-btn" onClick={controller.pause}>
+          restart
+        </button>
+        <button className="start-btn" onClick={controller.start}>
+          start
+        </button>
+        <button className="pause-btn" onClick={controller.pause}>
+          pause
+        </button>
+      </div>
+      <div className="step-control">
+        <button
+          className="left-btn"
+          onClick={() => controller.move("LEFT")}
+        ></button>
+        <button
+          className="right-btn"
+          onClick={() => controller.move("RIGHT")}
+        ></button>
+        <button
+          className="down-btn"
+          onClick={() => controller.move("FAST_DOWN")}
+        ></button>
+        <button
+          className="rotate-btn"
+          onClick={() => controller.move("ROTATE")}
+        ></button>
+      </div>
+      <div className="drop-control">
+        <button className="drop-btn" onClick={() => controller.move("DROP")}>
+          drop
+        </button>
+      </div>
     </div>
   );
 }

@@ -30,6 +30,7 @@ const pannelSlice = createSlice({
     curDropPos: [],
     gameState: "DROPPING",
     lastCancelledRow: 0,
+    topCancelledRow: 0,
   } as DefaultPannel,
   reducers: {
     setActive(state, action: PayloadAction<SetActivePayload>) {
@@ -74,6 +75,7 @@ const pannelSlice = createSlice({
 
       state.gameState = "CANCELLING";
       state.lastCancelledRow = cancelRows[cancelRows.length - 1];
+      state.topCancelledRow = cancelRows[0];
     },
 
     downBlocksAfterCancellation(state) {
@@ -94,13 +96,14 @@ const pannelSlice = createSlice({
       }
 
       // set isCancelling status as false
-      for (let row = state.lastCancelledRow; row <= state.maxRow; row++) {
+      for (let row = state.topCancelledRow; row <= state.maxRow; row++) {
         state.pannel[row].forEach((block, col) => {
           if (block.isCancelling) state.pannel[row][col].isCancelling = false;
         });
       }
 
       state.lastCancelledRow = 0;
+      state.topCancelledRow = 0;
       state.gameState = "CANCELLED";
     },
 

@@ -22,6 +22,7 @@ export type DefaultPannel = {
   }[];
   gameState: GameStates;
   lastCancelledRow: number;
+  topCancelledRow: number;
 };
 export type SetActivePayload = {
   row: number;

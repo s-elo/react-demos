@@ -5,6 +5,7 @@ export type GameStates =
   | "CANCELLED"
   | "PAUSING"
   | "RESTARTING";
+export type GameLevel = "kid" | "adult" | "elder" | "genius";
 export type DefaultPannel = {
   pannelWidth: number;
   pannelHeight: number;
@@ -23,6 +24,9 @@ export type DefaultPannel = {
   gameState: GameStates;
   lastCancelledRow: number;
   topCancelledRow: number;
+  record: number;
+  level: GameLevel;
+  score: number;
 };
 export type SetActivePayload = {
   row: number;

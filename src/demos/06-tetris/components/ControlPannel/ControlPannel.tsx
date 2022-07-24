@@ -1,5 +1,6 @@
 import React from "react";
 import { useController } from "../../control";
+import InfoPannel from "../InfoPannel/InfoPannel";
 import "./ControlPannel.less";
 
 export default function ControlPannel() {
@@ -37,6 +38,7 @@ export default function ControlPannel() {
         ></button>
       </div>
       <div className="drop-control">
+        <InfoPannel />
         <button className="drop-btn" onClick={() => controller.move("DROP")}>
           drop
         </button>

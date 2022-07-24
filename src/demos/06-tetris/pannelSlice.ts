@@ -31,6 +31,9 @@ const pannelSlice = createSlice({
     gameState: "DROPPING",
     lastCancelledRow: 0,
     topCancelledRow: 0,
+    record: 0,
+    level: "kid",
+    score: 0,
   } as DefaultPannel,
   reducers: {
     setActive(state, action: PayloadAction<SetActivePayload>) {
@@ -55,6 +58,8 @@ const pannelSlice = createSlice({
         state.gameState = "DROPPING";
         state.curDropPos = [];
         state.curDropState = "B";
+        state.score = 0;
+        state.level = "kid";
       }
     },
 
@@ -76,6 +81,39 @@ const pannelSlice = createSlice({
       state.gameState = "CANCELLING";
       state.lastCancelledRow = cancelRows[cancelRows.length - 1];
       state.topCancelledRow = cancelRows[0];
+
+      // update the score
+      const cancelledRowNum = cancelRows.length;
+      switch (cancelledRowNum) {
+        case 1:
+          state.score += 100;
+          break;
+        case 2:
+          state.score += 300;
+          break;
+        case 3:
+          state.score += 700;
+          break;
+        case 4:
+          state.score += 1500;
+          break;
+        default:
+          break;
+      }
+
+      // update level
+      if (state.score >= 0 && state.score < 500) {
+        state.level = "kid";
+      } else if (state.score >= 500 && state.score < 2000) {
+        state.level = "adult";
+      } else if (state.score >= 2000 && state.score < 5000) {
+        state.level = "elder";
+      } else {
+        state.level = "genius";
+      }
+
+      // update record
+      if (state.score > state.record) state.record = state.score;
     },
 
     downBlocksAfterCancellation(state) {
@@ -162,6 +200,11 @@ export const {
   downBlocksAfterCancellation,
 } = pannelSlice.actions;
 
+export const selectInfo = (state: RootState) => ({
+  level: state.pannel.level,
+  score: state.pannel.score,
+  record: state.pannel.record,
+});
 export const selectGameState = (state: RootState) => state.pannel.gameState;
 export const selectPannel = (state: RootState) => state.pannel;
 export const selectPannelPos = (state: RootState) => state.pannel.pannel;

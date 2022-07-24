@@ -11,14 +11,23 @@ import {
   setGameState,
   setActive,
   setDisactive,
+  selectInfo,
 } from "./pannelSlice";
 import { getActivePos, rotateFsm } from "./utils";
-import { BlockStates, GameStates, Operations, StartPos } from "./type";
+import {
+  BlockStates,
+  GameLevel,
+  GameStates,
+  Operations,
+  SetActivePayload,
+  StartPos,
+} from "./type";
 
 export const useController = () => {
   const { curDropPos, curDropState, curStartPos } = useSelector(selectCurBlock);
   const gameState = useSelector(selectGameState);
   const { maxRow, maxCol } = useSelector(selectBoundary);
+  const { level } = useSelector(selectInfo);
 
   const initBlock = useGenerateBlock();
   const checkBoundary = useCheckBoundary();
@@ -29,14 +38,42 @@ export const useController = () => {
   const moveFnRef = useRef<
     ((operation: Operations) => "STOPPED" | "DROPPING") | null
   >(null);
+  const restartFnRef = useRef<(() => void) | null>(null);
   const initBlockFnRef = useRef<(() => void) | null>(null);
   const gameStateRef = useRef<GameStates>("DROPPING");
-  const curDropPosRef = useRef<
-    {
-      row: number;
-      col: number;
-    }[]
-  >([]);
+  const curDropPosRef = useRef<SetActivePayload>([]);
+  const levelRef = useRef<GameLevel>("kid");
+
+  const globalTimerCallBack = () => {
+    if (!moveFnRef.current) return;
+    if (
+      gameStateRef.current === "RESTARTING" ||
+      gameStateRef.current === "PAUSING"
+    )
+      return;
+
+    if (
+      curDropPosRef.current.length === 0 ||
+      gameStateRef.current === "CANCELLING" ||
+      gameStateRef.current === "CANCELLED"
+    ) {
+      initBlockFnRef.current && initBlockFnRef.current();
+      return;
+    }
+
+    const status = moveFnRef.current("DOWN");
+
+    if (status === "STOPPED" && gameStateRef.current === "DROPPING") {
+      if (
+        curDropPosRef.current &&
+        curDropPosRef.current.some(({ row }) => row <= 0)
+      ) {
+        restartFnRef.current && restartFnRef.current();
+      } else {
+        initBlockFnRef.current && initBlockFnRef.current();
+      }
+    }
+  };
 
   return useMemo(() => {
     const controller = {
@@ -44,29 +81,15 @@ export const useController = () => {
         dispatch(setGameState("DROPPING"));
         if (timerRef.current != null) return;
 
-        timerRef.current = setInterval(() => {
-          if (!moveFnRef.current) return;
-          if (
-            gameStateRef.current === "RESTARTING" ||
-            gameStateRef.current === "PAUSING"
-          )
-            return;
-
-          if (
-            curDropPosRef.current.length === 0 ||
-            gameStateRef.current === "CANCELLING" ||
-            gameStateRef.current === "CANCELLED"
-          ) {
-            initBlockFnRef.current && initBlockFnRef.current();
-            return;
-          }
-
-          const status = moveFnRef.current("DOWN");
-
-          if (status === "STOPPED" && gameStateRef.current === "DROPPING") {
-            initBlockFnRef.current && initBlockFnRef.current();
-          }
-        }, 500);
+        const speed =
+          level === "kid"
+            ? 1000
+            : level === "adult"
+            ? 700
+            : level === "elder"
+            ? 500
+            : 200;
+        timerRef.current = setInterval(globalTimerCallBack, speed);
       },
       pause() {
         if (!timerRef.current) return;
@@ -163,9 +186,27 @@ export const useController = () => {
 
     // every time changes, update the ref so that the timer can use the latest function
     moveFnRef.current = controller.move;
+    restartFnRef.current = controller.restart;
     initBlockFnRef.current = initBlock;
     gameStateRef.current = gameState;
     curDropPosRef.current = curDropPos;
+
+    // update speed
+    if (level !== levelRef.current) {
+      levelRef.current = level;
+      timerRef.current && clearInterval(timerRef.current);
+
+      const speed =
+        level === "kid"
+          ? 1000
+          : level === "adult"
+          ? 700
+          : level === "elder"
+          ? 500
+          : 200;
+
+      timerRef.current = setInterval(globalTimerCallBack, speed);
+    }
 
     return controller;
   }, [
@@ -177,6 +218,7 @@ export const useController = () => {
     curStartPos,
     maxCol,
     maxRow,
+    level,
     gameState,
   ]);
 };

@@ -29,7 +29,7 @@ const pannelSlice = createSlice({
     curStartPos: { row: 0, col: 0 },
     curDropPos: [],
     gameState: "DROPPING",
-    topCancelledRow: 0,
+    lastCancelledRow: 0,
   } as DefaultPannel,
   reducers: {
     setActive(state, action: PayloadAction<SetActivePayload>) {
@@ -40,12 +40,21 @@ const pannelSlice = createSlice({
       });
     },
 
-    setDisactive(state, action: PayloadAction<SetActivePayload>) {
+    setDisactive(state, action: PayloadAction<SetActivePayload | "All">) {
       const activePos = action.payload;
 
-      activePos.forEach(({ row, col }) => {
-        state.pannel[row][col].isActive = false;
-      });
+      Array.isArray(activePos) &&
+        activePos.forEach(({ row, col }) => {
+          state.pannel[row][col].isActive = false;
+        });
+
+      if (activePos === "All") {
+        state.pannel = defaultPannel;
+
+        state.gameState = "DROPPING";
+        state.curDropPos = [];
+        state.curDropState = "B";
+      }
     },
 
     setGameState(state, action: PayloadAction<GameStates>) {
@@ -64,12 +73,12 @@ const pannelSlice = createSlice({
       );
 
       state.gameState = "CANCELLING";
-      state.topCancelledRow = cancelRows[cancelRows.length - 1];
+      state.lastCancelledRow = cancelRows[cancelRows.length - 1];
     },
 
     downBlocksAfterCancellation(state) {
       // down after cancellation
-      for (let row = state.topCancelledRow - 1; row >= 0; row--) {
+      for (let row = state.lastCancelledRow - 1; row >= 0; row--) {
         state.pannel[row].forEach((block, col) => {
           if (!block.isActive) return;
 
@@ -85,13 +94,13 @@ const pannelSlice = createSlice({
       }
 
       // set isCancelling status as false
-      for (let row = state.topCancelledRow; row <= state.maxRow; row++) {
+      for (let row = state.lastCancelledRow; row <= state.maxRow; row++) {
         state.pannel[row].forEach((block, col) => {
           if (block.isCancelling) state.pannel[row][col].isCancelling = false;
         });
       }
 
-      state.topCancelledRow = 0;
+      state.lastCancelledRow = 0;
       state.gameState = "CANCELLED";
     },
 

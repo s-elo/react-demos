@@ -8,7 +8,7 @@ export default function ControlPannel() {
   return (
     <div className="control-pannel">
       <div className="overall-control">
-        <button className="restart-btn" onClick={controller.pause}>
+        <button className="restart-btn" onClick={controller.restart}>
           restart
         </button>
         <button className="start-btn" onClick={controller.start}>

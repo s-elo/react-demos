@@ -1,5 +1,10 @@
 export type BlockShapes = "L" | "J" | "T" | "S" | "Z" | "O" | "I" | "B";
-export type GameStates = "DROPPING" | "CANCELLING" | "CANCELLED" | "PAUSING";
+export type GameStates =
+  | "DROPPING"
+  | "CANCELLING"
+  | "CANCELLED"
+  | "PAUSING"
+  | "RESTARTING";
 export type DefaultPannel = {
   pannelWidth: number;
   pannelHeight: number;
@@ -16,7 +21,7 @@ export type DefaultPannel = {
     col: number;
   }[];
   gameState: GameStates;
-  topCancelledRow: number;
+  lastCancelledRow: number;
 };
 export type SetActivePayload = {
   row: number;

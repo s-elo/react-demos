@@ -9,6 +9,8 @@ import {
   cancelBlocks,
   downBlocksAfterCancellation,
   setGameState,
+  setActive,
+  setDisactive,
 } from "./pannelSlice";
 import { getActivePos, rotateFsm } from "./utils";
 import { BlockStates, GameStates, Operations, StartPos } from "./type";
@@ -16,7 +18,7 @@ import { BlockStates, GameStates, Operations, StartPos } from "./type";
 export const useController = () => {
   const { curDropPos, curDropState, curStartPos } = useSelector(selectCurBlock);
   const gameState = useSelector(selectGameState);
-  const { maxCol } = useSelector(selectBoundary);
+  const { maxRow, maxCol } = useSelector(selectBoundary);
 
   const initBlock = useGenerateBlock();
   const checkBoundary = useCheckBoundary();
@@ -29,6 +31,12 @@ export const useController = () => {
   >(null);
   const initBlockFnRef = useRef<(() => void) | null>(null);
   const gameStateRef = useRef<GameStates>("DROPPING");
+  const curDropPosRef = useRef<
+    {
+      row: number;
+      col: number;
+    }[]
+  >([]);
 
   return useMemo(() => {
     const controller = {
@@ -36,13 +44,16 @@ export const useController = () => {
         dispatch(setGameState("DROPPING"));
         if (timerRef.current != null) return;
 
-        // when no block dropping, generate one
-        curDropPos.length === 0 && initBlock();
-
         timerRef.current = setInterval(() => {
           if (!moveFnRef.current) return;
+          if (
+            gameStateRef.current === "RESTARTING" ||
+            gameStateRef.current === "PAUSING"
+          )
+            return;
 
           if (
+            curDropPosRef.current.length === 0 ||
             gameStateRef.current === "CANCELLING" ||
             gameStateRef.current === "CANCELLED"
           ) {
@@ -55,12 +66,10 @@ export const useController = () => {
           if (status === "STOPPED" && gameStateRef.current === "DROPPING") {
             initBlockFnRef.current && initBlockFnRef.current();
           }
-        }, 1000);
+        }, 500);
       },
       pause() {
         if (!timerRef.current) return;
-        clearInterval(timerRef.current);
-        timerRef.current = null;
         dispatch(setGameState("PAUSING"));
       },
       move(operation: Operations) {
@@ -126,12 +135,37 @@ export const useController = () => {
 
         return "DROPPING";
       },
+      restart() {
+        dispatch(setGameState("RESTARTING"));
+
+        Promise.all(
+          new Array(maxCol + 1).fill(0).map(
+            (_, col) =>
+              new Promise<NodeJS.Timer>((res) => {
+                let row = maxRow;
+
+                const refreshTimer: NodeJS.Timer = setInterval(() => {
+                  if (row < 0) return res(refreshTimer);
+
+                  dispatch(setActive([{ row, col }]));
+
+                  row--;
+                }, 50);
+              })
+          )
+        ).then((timers) => {
+          timers.forEach((timer) => clearInterval(timer));
+
+          dispatch(setDisactive("All"));
+        });
+      },
     };
 
     // every time changes, update the ref so that the timer can use the latest function
     moveFnRef.current = controller.move;
     initBlockFnRef.current = initBlock;
     gameStateRef.current = gameState;
+    curDropPosRef.current = curDropPos;
 
     return controller;
   }, [
@@ -142,6 +176,7 @@ export const useController = () => {
     curDropState,
     curStartPos,
     maxCol,
+    maxRow,
     gameState,
   ]);
 };

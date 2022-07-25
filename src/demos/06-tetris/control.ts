@@ -12,6 +12,7 @@ import {
   setActive,
   setDisactive,
   selectInfo,
+  storeState,
 } from "./pannelSlice";
 import { getActivePos, rotateFsm } from "./utils";
 import {
@@ -44,38 +45,39 @@ export const useController = () => {
   const curDropPosRef = useRef<SetActivePayload>([]);
   const levelRef = useRef<GameLevel>("kid");
 
-  const globalTimerCallBack = () => {
-    if (!moveFnRef.current) return;
-    if (
-      gameStateRef.current === "RESTARTING" ||
-      gameStateRef.current === "PAUSING"
-    )
-      return;
-
-    if (
-      curDropPosRef.current.length === 0 ||
-      gameStateRef.current === "CANCELLING" ||
-      gameStateRef.current === "CANCELLED"
-    ) {
-      initBlockFnRef.current && initBlockFnRef.current();
-      return;
-    }
-
-    const status = moveFnRef.current("DOWN");
-
-    if (status === "STOPPED" && gameStateRef.current === "DROPPING") {
-      if (
-        curDropPosRef.current &&
-        curDropPosRef.current.some(({ row }) => row <= 0)
-      ) {
-        restartFnRef.current && restartFnRef.current();
-      } else {
-        initBlockFnRef.current && initBlockFnRef.current();
-      }
-    }
-  };
-
   return useMemo(() => {
+    const globalTimerCallBack = () => {
+      if (!moveFnRef.current) return;
+      if (
+        gameStateRef.current === "RESTARTING" ||
+        gameStateRef.current === "PAUSING"
+      )
+        return;
+
+      if (
+        curDropPosRef.current.length === 0 ||
+        gameStateRef.current === "CANCELLING" ||
+        gameStateRef.current === "CANCELLED"
+      ) {
+        initBlockFnRef.current && initBlockFnRef.current();
+        return;
+      }
+
+      const status = moveFnRef.current("DOWN");
+
+      if (status === "STOPPED" && gameStateRef.current === "DROPPING") {
+        if (
+          curDropPosRef.current &&
+          curDropPosRef.current.some(({ row }) => row <= 0)
+        ) {
+          restartFnRef.current && restartFnRef.current();
+        } else {
+          initBlockFnRef.current && initBlockFnRef.current();
+        }
+      }
+
+      dispatch(storeState());
+    };
     const controller = {
       start() {
         dispatch(setGameState("DROPPING"));

@@ -17,25 +17,34 @@ const defaultPannel: { isActive: boolean; isCancelling: boolean }[][] =
     })
   );
 
+const localState = localStorage.getItem("tetris");
+const initialState: DefaultPannel = localState
+  ? JSON.parse(localState)
+  : {
+      pannelWidth: defaultPannelWidth,
+      pannelHeight: defaultPannelHeight,
+      maxRow: ~~(defaultPannelHeight / 22) - 1,
+      maxCol: ~~(defaultPannelWidth / 22) - 1,
+      pannel: defaultPannel,
+      curDropState: "B",
+      curStartPos: { row: 0, col: 0 },
+      curDropPos: [],
+      gameState: "DROPPING",
+      lastCancelledRow: 0,
+      topCancelledRow: 0,
+      record: 0,
+      level: "kid",
+      score: 0,
+    };
+
 const pannelSlice = createSlice({
   name: "pannel",
-  initialState: {
-    pannelWidth: defaultPannelWidth,
-    pannelHeight: defaultPannelHeight,
-    maxRow: ~~(defaultPannelHeight / 22) - 1,
-    maxCol: ~~(defaultPannelWidth / 22) - 1,
-    pannel: defaultPannel,
-    curDropState: "B",
-    curStartPos: { row: 0, col: 0 },
-    curDropPos: [],
-    gameState: "DROPPING",
-    lastCancelledRow: 0,
-    topCancelledRow: 0,
-    record: 0,
-    level: "kid",
-    score: 0,
-  } as DefaultPannel,
+  initialState,
   reducers: {
+    storeState(state) {
+      localStorage.setItem("tetris", JSON.stringify(state));
+    },
+
     setActive(state, action: PayloadAction<SetActivePayload>) {
       const activePos = action.payload;
 
@@ -192,6 +201,7 @@ const pannelSlice = createSlice({
 
 export default pannelSlice.reducer;
 export const {
+  storeState,
   setActive,
   setDisactive,
   setDropBlocks,
